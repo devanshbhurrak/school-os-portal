@@ -3,16 +3,20 @@
 import {
   CalendarRange,
   CalendarDays,
+  ClipboardList,
+  Database,
   GraduationCap,
   History,
   Home,
   LayoutGrid,
   Library,
   ListChecks,
+  Megaphone,
   School,
   Settings,
   ShieldCheck,
   UserRoundCog,
+  UserRoundPen,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -56,6 +60,25 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: Users,
         permission: PERMISSIONS.person.list,
         match: ["/people"],
+      },
+      {
+        href: "/teachers",
+        label: "Teachers",
+        icon: UserRoundPen,
+        permission: PERMISSIONS.teacher.list,
+        match: ["/teachers"],
+      },
+    ],
+  },
+  {
+    label: "Students",
+    items: [
+      {
+        href: "/students",
+        label: "Students",
+        icon: GraduationCap,
+        permission: PERMISSIONS.student.list,
+        match: ["/students"],
       },
     ],
   },
@@ -107,6 +130,49 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: "Scheduling",
+    items: [
+      {
+        href: "/timetables",
+        label: "Timetables",
+        icon: CalendarDays,
+        permission: PERMISSIONS.timetables.slot.list,
+        match: ["/timetables"],
+      },
+      {
+        href: "/attendance",
+        label: "Attendance",
+        icon: ClipboardList,
+        permission: PERMISSIONS.attendance.session.list,
+        match: ["/attendance"],
+      },
+    ],
+  },
+  {
+    label: "Data Management",
+    items: [
+      {
+        href: "/data-management",
+        label: "Data Management",
+        icon: Database,
+        permission: PERMISSIONS.bulkImport.import.list,
+        match: ["/data-management"],
+      },
+    ],
+  },
+  {
+    label: "Communication",
+    items: [
+      {
+        href: "/announcements",
+        label: "Announcements",
+        icon: Megaphone,
+        permission: PERMISSIONS.announcement.list,
+        match: ["/announcements"],
+      },
+    ],
+  },
+  {
     label: "Settings",
     items: [
       {
@@ -141,7 +207,7 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/settings/audit",
         label: "Audit Log",
         icon: History,
-        permission: PERMISSIONS.role.list,
+        permission: PERMISSIONS.role.read,
         match: ["/settings/audit"],
       },
     ],
@@ -151,6 +217,7 @@ export const NAV_GROUPS: NavGroup[] = [
 /** Human-readable breadcrumb labels for route segments. */
 export const SEGMENT_LABELS: Record<string, string> = {
   home: "Home",
+  students: "Students",
   people: "People",
   academics: "Academics",
   years: "Academic Years",
@@ -165,6 +232,11 @@ export const SEGMENT_LABELS: Record<string, string> = {
   roles: "Roles",
   memberships: "Access",
   audit: "Audit Log",
+  announcements: "Announcements",
+  teachers: "Teachers",
+  timetables: "Timetables",
+  attendance: "Attendance",
+  "data-management": "Data Management",
 };
 
 /** Which sidebar item owns each route prefix (for active states). */

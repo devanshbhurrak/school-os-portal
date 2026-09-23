@@ -16,6 +16,18 @@ export const STATUS_LABELS: Record<string, string> = {
   ENDED: "Ended",
   TRIAL: "Trial",
   CURRENT: "Current",
+  SUBMITTED: "Submitted",
+  AMENDED: "Amended",
+  ON_LEAVE: "On leave",
+  RESIGNED: "Resigned",
+  TERMINATED: "Terminated",
+};
+
+export const ASSIGNMENT_ROLE_LABELS: Record<string, string> = {
+  SUBJECT_TEACHER: "Subject teacher",
+  CLASS_TEACHER: "Class teacher",
+  SUBSTITUTE: "Substitute",
+  COORDINATOR: "Coordinator",
 };
 
 export const SUBJECT_TYPE_LABELS: Record<string, string> = {

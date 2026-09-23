@@ -6,3 +6,11 @@ export * from "./addresses";
 export * from "./academics";
 export * from "./iam";
 export * from "./audit";
+export * from "./students";
+export * from "./enrollments";
+export * from "./guardians";
+export * from "./announcements";
+export * from "./teachers";
+export * from "./timetables"
+export * from "./attendance";
+export * from "./import-jobs";

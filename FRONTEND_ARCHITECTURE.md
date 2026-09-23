@@ -15,7 +15,7 @@ The architecture covers the full product vision, but the API delivers capabiliti
 ### Phase 1 — Foundation (current API)
 Auth, IAM (organizations, schools, users, memberships, roles), People (persons, addresses, contacts), Academics (years, terms, classes, subjects, class-subjects, cohorts).
 
-> **Note:** Audit log entries are written server-side in every mutation transaction, but there is **no read API endpoint** for audit logs yet. The `AuditLog` model exists; a read-only `/audit-logs` endpoint must be added to the API before the frontend audit viewer or entity history timelines can be built. Until then, audit-related UI (Settings → Audit, person history tabs) should be designed but not implemented.
+> Audit log entries are written server-side in every mutation transaction. The `/audit-logs` read endpoint is available with cursor pagination and filters by entity_type, entity_id, actor_user_id, school_id, and date range.
 
 ### Phase 2 — Core Operations (planned)
 Student enrollment, staff employment, attendance, guardian relationships, fee accounts, admissions workflow.
@@ -76,14 +76,14 @@ History
 - Bulk import *(future)*
 
 ### Insight
-- Dashboard (Phase 1: counts + data quality; activity timeline blocked until audit read API)
+- Dashboard (counts + data quality + activity timeline via /audit-logs)
 - Alerts
 - Reports *(future)*
 - Analytics *(future)*
 - Data quality
 
 ### History
-- Audit log *(blocked: read API not yet available — model exists, entries written)*
+- Audit log (available via /audit-logs)
 - Enrollment history *(future)*
 - Activity
 - Communication history *(future)*
@@ -135,7 +135,7 @@ school-os-portal/
 │           │   └── [roleId]/
 │           ├── memberships/
 │           ├── organization/                  ← platform admin only
-│           └── audit/                         ← (blocked: no read API yet)
+│           └── audit/                         ← /audit-logs (available)
 ├── components/
 │   ├── ui/                 ← design system primitives
 │   ├── layout/             ← shell, sidebar, header, breadcrumb
@@ -319,7 +319,7 @@ Settings
   School Profile              ← /schools/{id} (includes board, affiliation number)
   Academic Configuration      ← years, terms, classes, subjects
   Users & Roles               ← /users, /roles, /memberships
-  Audit                       ← (blocked: no /audit-logs read API yet — design only)
+  Audit                       ← /audit-logs (available)
   Organization                ← /organizations (platform admin only)
   Communication               ← (future)
   Integrations                ← (future)
@@ -359,7 +359,7 @@ Academics      → academic.academic_year.list
 Settings       → iam.school.read
 Users & Roles  → iam.user.list, iam.role.list
 Memberships    → iam.membership.list
-Audit          → (blocked: no read API yet)
+Audit          → people.person.list (audit log available via /audit-logs)
 Organizations  → iam.organization.list (platform admin only)
 ```
 
@@ -376,7 +376,7 @@ Attendance      ← (future)
 Fees            ← (future)
 Documents       ← (future)
 Communication   ← (future)
-History         ← (blocked: no audit log read API yet)
+History         ← audit log available via /audit-logs
 ```
 
 ### Staff
@@ -388,7 +388,7 @@ Timetable       ← (future)
 Classes         ← (future)
 Attendance      ← (future)
 Documents       ← (future)
-History         ← (blocked: no audit log read API yet)
+History         ← audit log available via /audit-logs
 ```
 
 ### Cohort
@@ -460,7 +460,7 @@ For Phase 1, the dashboard can be built from:
 - Counts from list endpoints (persons, cohorts, users)
 - Data quality checks (persons without contacts, classes without subjects, years without terms)
 
-> **Note:** "Recent activity" from audit logs is blocked until the audit log read API is available. Dashboard activity widgets should be designed but deferred.
+Recent activity from audit logs is available via `GET /audit-logs`. Dashboard activity widgets can now be built.
 
 ## Cross-Module Attention
 

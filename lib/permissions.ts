@@ -100,6 +100,92 @@ export const PERMISSIONS = {
     update: "academic.cohort.update",
     delete: "academic.cohort.delete",
   },
+  student: {
+    list: "students.student.list",
+    read: "students.student.read",
+    create: "students.student.create",
+    update: "students.student.update",
+    delete: "students.student.delete",
+  },
+  guardian: {
+    list: "students.guardian.list",
+    read: "students.guardian.read",
+    create: "students.guardian.create",
+    update: "students.guardian.update",
+    delete: "students.guardian.delete",
+  },
+  enrollment: {
+    list: "students.enrollment.list",
+    read: "students.enrollment.read",
+    create: "students.enrollment.create",
+    update: "students.enrollment.update",
+    delete: "students.enrollment.delete",
+    transfer: "students.enrollment.transfer",
+  },
+  announcement: {
+    list: "announcements.announcement.list",
+    read: "announcements.announcement.read",
+    create: "announcements.announcement.create",
+    update: "announcements.announcement.update",
+    delete: "announcements.announcement.delete",
+    publish: "announcements.announcement.publish",
+    archive: "announcements.announcement.archive",
+  },
+  teacher: {
+    list: "teachers.teacher.list",
+    read: "teachers.teacher.read",
+    create: "teachers.teacher.create",
+    update: "teachers.teacher.update",
+    delete: "teachers.teacher.delete",
+  },
+  teacherAssignment: {
+    list: "teachers.assignment.list",
+    read: "teachers.assignment.read",
+    create: "teachers.assignment.create",
+    update: "teachers.assignment.update",
+    delete: "teachers.assignment.delete",
+  },
+  bulkImport: {
+    import: {
+      list: "bulk_import.import.list",
+      read: "bulk_import.import.read",
+      create: "bulk_import.import.create",
+    },
+    export: {
+      create: "bulk_import.export.create",
+    },
+  },
+  timetables: {
+    period: {
+      list: "timetables.period.list",
+      read: "timetables.period.read",
+      create: "timetables.period.create",
+      update: "timetables.period.update",
+      delete: "timetables.period.delete",
+    },
+    slot: {
+      list: "timetables.slot.list",
+      read: "timetables.slot.read",
+      create: "timetables.slot.create",
+      update: "timetables.slot.update",
+      delete: "timetables.slot.delete",
+    },
+  },
+  attendance: {
+    session: {
+      list: "attendance.session.list",
+      read: "attendance.session.read",
+      create: "attendance.session.create",
+      update: "attendance.session.update",
+      delete: "attendance.session.delete",
+      submit: "attendance.session.submit",
+      amend: "attendance.session.amend",
+    },
+    record: {
+      list: "attendance.record.list",
+      update: "attendance.record.update",
+    },
+  },
 } as const;
 
 export type PermissionKey = keyof typeof PERMISSIONS;
@@ -114,6 +200,46 @@ export const PERMISSION_CATALOGUE: {
     actions: { code: string; label: string }[];
   }[];
 }[] = [
+  {
+    module: "students",
+    moduleLabel: "Students",
+    resources: [
+      {
+        resource: "student",
+        resourceLabel: "Students",
+        actions: [
+          { code: PERMISSIONS.student.list, label: "View list" },
+          { code: PERMISSIONS.student.read, label: "View details" },
+          { code: PERMISSIONS.student.create, label: "Add" },
+          { code: PERMISSIONS.student.update, label: "Edit" },
+          { code: PERMISSIONS.student.delete, label: "Delete" },
+        ],
+      },
+      {
+        resource: "guardian",
+        resourceLabel: "Guardians",
+        actions: [
+          { code: PERMISSIONS.guardian.list, label: "View list" },
+          { code: PERMISSIONS.guardian.read, label: "View details" },
+          { code: PERMISSIONS.guardian.create, label: "Add" },
+          { code: PERMISSIONS.guardian.update, label: "Edit" },
+          { code: PERMISSIONS.guardian.delete, label: "Remove" },
+        ],
+      },
+      {
+        resource: "enrollment",
+        resourceLabel: "Enrollments",
+        actions: [
+          { code: PERMISSIONS.enrollment.list, label: "View list" },
+          { code: PERMISSIONS.enrollment.read, label: "View details" },
+          { code: PERMISSIONS.enrollment.create, label: "Enroll" },
+          { code: PERMISSIONS.enrollment.update, label: "Edit" },
+          { code: PERMISSIONS.enrollment.delete, label: "Delete" },
+          { code: PERMISSIONS.enrollment.transfer, label: "Transfer" },
+        ],
+      },
+    ],
+  },
   {
     module: "people",
     moduleLabel: "People",
@@ -226,6 +352,89 @@ export const PERMISSION_CATALOGUE: {
     ],
   },
   {
+    module: "teachers",
+    moduleLabel: "Teachers",
+    resources: [
+      {
+        resource: "teacher",
+        resourceLabel: "Teachers",
+        actions: [
+          { code: PERMISSIONS.teacher.list, label: "View list" },
+          { code: PERMISSIONS.teacher.read, label: "View details" },
+          { code: PERMISSIONS.teacher.create, label: "Add" },
+          { code: PERMISSIONS.teacher.update, label: "Edit" },
+          { code: PERMISSIONS.teacher.delete, label: "Delete" },
+        ],
+      },
+      {
+        resource: "assignment",
+        resourceLabel: "Teacher assignments",
+        actions: [
+          { code: PERMISSIONS.teacherAssignment.list, label: "View list" },
+          { code: PERMISSIONS.teacherAssignment.read, label: "View details" },
+          { code: PERMISSIONS.teacherAssignment.create, label: "Assign" },
+          { code: PERMISSIONS.teacherAssignment.update, label: "Edit" },
+          { code: PERMISSIONS.teacherAssignment.delete, label: "End assignment" },
+        ],
+      },
+    ],
+  },
+  {
+    module: "timetables",
+    moduleLabel: "Timetables",
+    resources: [
+      {
+        resource: "period",
+        resourceLabel: "Period definitions",
+        actions: [
+          { code: PERMISSIONS.timetables.period.list, label: "View list" },
+          { code: PERMISSIONS.timetables.period.read, label: "View details" },
+          { code: PERMISSIONS.timetables.period.create, label: "Add" },
+          { code: PERMISSIONS.timetables.period.update, label: "Edit" },
+          { code: PERMISSIONS.timetables.period.delete, label: "Delete" },
+        ],
+      },
+      {
+        resource: "slot",
+        resourceLabel: "Timetable slots",
+        actions: [
+          { code: PERMISSIONS.timetables.slot.list, label: "View list" },
+          { code: PERMISSIONS.timetables.slot.read, label: "View details" },
+          { code: PERMISSIONS.timetables.slot.create, label: "Add" },
+          { code: PERMISSIONS.timetables.slot.update, label: "Edit" },
+          { code: PERMISSIONS.timetables.slot.delete, label: "Cancel" },
+        ],
+      },
+    ],
+  },
+  {
+    module: "attendance",
+    moduleLabel: "Attendance",
+    resources: [
+      {
+        resource: "session",
+        resourceLabel: "Attendance sessions",
+        actions: [
+          { code: PERMISSIONS.attendance.session.list, label: "View list" },
+          { code: PERMISSIONS.attendance.session.read, label: "View details" },
+          { code: PERMISSIONS.attendance.session.create, label: "Create" },
+          { code: PERMISSIONS.attendance.session.update, label: "Edit" },
+          { code: PERMISSIONS.attendance.session.delete, label: "Delete" },
+          { code: PERMISSIONS.attendance.session.submit, label: "Submit" },
+          { code: PERMISSIONS.attendance.session.amend, label: "Amend" },
+        ],
+      },
+      {
+        resource: "record",
+        resourceLabel: "Attendance records",
+        actions: [
+          { code: PERMISSIONS.attendance.record.list, label: "View list" },
+          { code: PERMISSIONS.attendance.record.update, label: "Update" },
+        ],
+      },
+    ],
+  },
+  {
     module: "iam",
     moduleLabel: "Settings & Access",
     resources: [
@@ -285,6 +494,47 @@ export const PERMISSION_CATALOGUE: {
           { code: PERMISSIONS.role.create, label: "Add" },
           { code: PERMISSIONS.role.update, label: "Edit" },
           { code: PERMISSIONS.role.delete, label: "Delete" },
+        ],
+      },
+    ],
+  },
+  {
+    module: "announcements",
+    moduleLabel: "Communication",
+    resources: [
+      {
+        resource: "announcement",
+        resourceLabel: "Announcements",
+        actions: [
+          { code: PERMISSIONS.announcement.list, label: "View list" },
+          { code: PERMISSIONS.announcement.read, label: "View details" },
+          { code: PERMISSIONS.announcement.create, label: "Create" },
+          { code: PERMISSIONS.announcement.update, label: "Edit" },
+          { code: PERMISSIONS.announcement.delete, label: "Delete" },
+          { code: PERMISSIONS.announcement.publish, label: "Publish" },
+          { code: PERMISSIONS.announcement.archive, label: "Archive" },
+        ],
+      },
+    ],
+  },
+  {
+    module: "bulk_import",
+    moduleLabel: "Data Management",
+    resources: [
+      {
+        resource: "import",
+        resourceLabel: "Bulk import",
+        actions: [
+          { code: PERMISSIONS.bulkImport.import.list, label: "View import jobs" },
+          { code: PERMISSIONS.bulkImport.import.read, label: "View import details" },
+          { code: PERMISSIONS.bulkImport.import.create, label: "Upload CSV" },
+        ],
+      },
+      {
+        resource: "export",
+        resourceLabel: "Data export",
+        actions: [
+          { code: PERMISSIONS.bulkImport.export.create, label: "Export to CSV" },
         ],
       },
     ],

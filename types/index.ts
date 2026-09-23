@@ -4,3 +4,9 @@ export * from "./person";
 export * from "./academic";
 export * from "./iam";
 export * from "./common";
+export * from "./student";
+export * from "./announcement";
+export * from "./teacher";
+export * from "./timetable"
+export * from "./attendance";
+export * from "./import-job";

@@ -1,4 +1,5 @@
-import type { CursorParams, EntityType } from "@/types";
+import type { AnnouncementListParams, CursorParams, EntityType, StudentListParams, TimetableSlotListParams } from "@/types";
+import type { AssignmentListParams, TeacherListParams } from "@/services";
 import type {
   AuditLogListParams,
   ClassSubjectListParams,
@@ -75,12 +76,53 @@ export const schoolKeys = {
   ) => ["school", schoolId, "persons", params] as const,
   person: (schoolId: string, personId: string) =>
     ["school", schoolId, "persons", personId] as const,
+  students: (schoolId: string, params?: StudentListParams) =>
+    ["school", schoolId, "students", params] as const,
+  student: (schoolId: string, studentId: string) =>
+    ["school", schoolId, "students", studentId] as const,
   contacts: (schoolId: string, entityType: EntityType, entityId: string) =>
     ["school", schoolId, "contacts", entityType, entityId] as const,
   addresses: (schoolId: string, entityType: EntityType, entityId: string) =>
     ["school", schoolId, "addresses", entityType, entityId] as const,
   audit: (schoolId: string, params: AuditLogListParams = {}) =>
     ["school", schoolId, "audit", params] as const,
+  announcements: (schoolId: string, params: AnnouncementListParams = {}) =>
+    ["school", schoolId, "announcements", params] as const,
+  announcement: (schoolId: string, announcementId: string) =>
+    ["school", schoolId, "announcements", announcementId] as const,
+  announcementFeed: (schoolId: string, params: AnnouncementListParams = {}) =>
+    ["school", schoolId, "announcements-feed", params] as const,
+  teachers: (schoolId: string, params: TeacherListParams = {}) =>
+    ["school", schoolId, "teachers", params] as const,
+  teacher: (schoolId: string, teacherId: string) =>
+    ["school", schoolId, "teachers", teacherId] as const,
+  teacherAssignments: (schoolId: string, params: AssignmentListParams = {}) =>
+    ["school", schoolId, "teacher-assignments", params] as const,
+  periodDefinitions: (schoolId: string, academicYearId?: string) =>
+    ["school", schoolId, "period-definitions", academicYearId] as const,
+  timetableSlots: (schoolId: string, params?: TimetableSlotListParams) =>
+    ["school", schoolId, "timetable-slots", params] as const,
+  timetableSlot: (schoolId: string, id: string) =>
+    ["school", schoolId, "timetable-slot", id] as const,
+  enrollments: (schoolId: string, params?: Record<string, unknown>) =>
+    [...schoolKeys.all(schoolId), "enrollments", params] as const,
+  enrollment: (schoolId: string, id: string) =>
+    [...schoolKeys.all(schoolId), "enrollment", id] as const,
+  guardians: (schoolId: string, studentId: string) => [...schoolKeys.all(schoolId), "guardians", studentId] as const,
+  guardian: (schoolId: string, id: string) => [...schoolKeys.all(schoolId), "guardian", id] as const,
+  attendanceSessions: (schoolId: string, params?: Record<string, unknown>) =>
+    [...schoolKeys.all(schoolId), "attendance-sessions", params] as const,
+  attendanceSession: (schoolId: string, id: string) =>
+    [...schoolKeys.all(schoolId), "attendance-session", id] as const,
+  attendanceRecords: (schoolId: string, sessionId: string) =>
+    [...schoolKeys.all(schoolId), "attendance-records", sessionId] as const,
+  studentAttendance: (schoolId: string, studentId: string) =>
+    [...schoolKeys.all(schoolId), "student-attendance", studentId] as const,
+  all: (schoolId: string) => ["school", schoolId] as const,
+  importJobs: (schoolId: string, params?: Record<string, unknown>) =>
+    [...schoolKeys.all(schoolId), "import-jobs", params] as const,
+  importJob: (schoolId: string, id: string) =>
+    [...schoolKeys.all(schoolId), "import-job", id] as const,
 };
 
 /** Platform-admin scoped — cross-org, no school context. */

@@ -35,6 +35,8 @@ const STATUS_TONES: Record<string, Tone> = {
   ACTIVE: "green",
   INACTIVE: "gray",
   DRAFT: "gray",
+  SUBMITTED: "green",
+  AMENDED: "amber",
   ARCHIVED: "gray",
   CLOSED: "gray",
   ENDED: "gray",
