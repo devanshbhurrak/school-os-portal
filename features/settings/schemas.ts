@@ -1,19 +1,19 @@
 import { z } from "zod";
 
 export const schoolFormSchema = z.object({
-  name: z.string().min(1, "School name is required.").max(255),
-  short_name: z.string().max(100).optional(),
+  name: z.string().min(1, "School name is required.").max(200),
+  short_name: z.string().max(60).optional(),
   status: z.string().min(1, "Choose a status."),
-  board: z.string().max(100).optional(),
-  affiliation_number: z.string().max(100).optional(),
+  board: z.string().max(40).optional(),
+  affiliation_number: z.string().max(60).optional(),
   contact_email: z.string().max(255).optional(),
-  contact_phone: z.string().max(64).optional(),
+  contact_phone: z.string().max(24).optional(),
 });
 
 export const userFormSchema = z
   .object({
     email: z.string().max(255).optional(),
-    phone: z.string().max(64).optional(),
+    phone: z.string().max(24).optional(),
     password: z.string().min(8, "Password must be at least 8 characters.").max(128).optional(),
     school_id: z.string().optional(),
     status: z.string().min(1, "Choose a status."),
@@ -33,9 +33,9 @@ export const userFormSchema = z
   );
 
 export const roleFormSchema = z.object({
-  code: z.string().min(1, "Code is required.").max(64),
-  name: z.string().min(1, "Role name is required.").max(255),
-  description: z.string().max(512).optional(),
+  code: z.string().min(1, "Code is required.").max(60),
+  name: z.string().min(1, "Role name is required.").max(120),
+  description: z.string().max(400).optional(),
   scope_level: z.string().min(1, "Choose a scope."),
   data_scope: z.string().min(1, "Choose a data scope."),
   permission_codes: z.array(z.string()),
