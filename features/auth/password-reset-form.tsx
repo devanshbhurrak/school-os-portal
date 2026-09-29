@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { requestPasswordReset } from "@/services/auth";
 import { passwordResetSchema, type PasswordResetValues } from "./schemas";
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 
 export function PasswordResetForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -24,8 +25,21 @@ export function PasswordResetForm() {
   });
 
   const onSubmit = handleSubmit(async (values) => {
-    await requestPasswordReset(values);
-    setSubmitted(true);
+    setServerError(null);
+    try {
+      await requestPasswordReset(values);
+      setSubmitted(true);
+    } catch (err: unknown) {
+      // Rate limit: tell the user to wait. Any other error: generic message.
+      // We do NOT distinguish "email not found" to avoid user enumeration.
+      const status = (err as { status?: number })?.status ??
+        (err as { response?: { status?: number } })?.response?.status;
+      if (status === 429) {
+        setServerError("Too many requests. Please wait a few minutes before trying again.");
+      } else {
+        setServerError("Something went wrong. Please try again.");
+      }
+    }
   });
 
   if (submitted) {
@@ -55,6 +69,13 @@ export function PasswordResetForm() {
           account exists.
         </p>
       </div>
+
+      {serverError ? (
+        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          <AlertCircle className="size-4 shrink-0" aria-hidden />
+          {serverError}
+        </div>
+      ) : null}
 
       <div className="space-y-1.5">
         <Label htmlFor="identifier">Email or phone</Label>
