@@ -34,7 +34,7 @@ import { AnnouncementFormDialog } from "./announcement-form-dialog";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
-const STATUS_FILTERS: (AnnouncementStatus | "ALL")[] = ["ALL", "DRAFT", "PUBLISHED", "ARCHIVED"];
+const STATUS_FILTERS: (AnnouncementStatus | "ALL")[] = ["ALL", "DRAFT", "PUBLISHED", "EXPIRED", "ARCHIVED"];
 const PRIORITY_FILTERS: (AnnouncementPriority | "ALL")[] = ["ALL", "NORMAL", "HIGH", "URGENT"];
 
 const PRIORITY_LABELS: Record<AnnouncementPriority, string> = {
@@ -178,7 +178,7 @@ export function AnnouncementList({ initialNew = false }: { initialNew?: boolean 
                     <Send className="size-4" /> Publish
                   </DropdownMenuItem>
                 )}
-                {canArchive && row.original.status === "PUBLISHED" && (
+                {canArchive && (row.original.status === "PUBLISHED" || row.original.status === "EXPIRED") && (
                   <DropdownMenuItem onSelect={() => handleArchive(row.original)}>
                     <Archive className="size-4" /> Archive
                   </DropdownMenuItem>

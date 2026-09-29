@@ -38,6 +38,8 @@ export interface AnnouncementCreate {
   body: string;
   priority?: AnnouncementPriority;
   publish_mode?: AnnouncementPublishMode;
+  /** Required when publish_mode is SCHEDULED. */
+  published_at?: ISODateTime;
   targets?: AnnouncementTargetCreate[];
   expires_at?: ISODateTime;
 }

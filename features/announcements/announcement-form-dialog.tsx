@@ -41,19 +41,30 @@ import { StaleResourceDialog } from "@/components/patterns/stale-resource-dialog
 
 const TARGET_TYPES = ["SCHOOL", "CLASS", "COHORT", "ROLE"] as const;
 
-const announcementSchema = z.object({
-  title: z.string().min(1, "Title is required").max(500),
-  body: z.string().min(1, "Body is required"),
-  priority: z.enum(["NORMAL", "HIGH", "URGENT"]),
-  publish_mode: z.enum(["IMMEDIATE", "SCHEDULED"]),
-  expires_at: z.string().optional(),
-  targets: z.array(
-    z.object({
-      target_type: z.enum(["SCHOOL", "CLASS", "COHORT", "ROLE"]),
-      target_id: z.string().optional(),
-    }),
-  ),
-});
+const announcementSchema = z
+  .object({
+    title: z.string().min(1, "Title is required").max(500),
+    body: z.string().min(1, "Body is required"),
+    priority: z.enum(["NORMAL", "HIGH", "URGENT"]),
+    publish_mode: z.enum(["IMMEDIATE", "SCHEDULED"]),
+    scheduled_at: z.string().optional(),
+    expires_at: z.string().optional(),
+    targets: z.array(
+      z.object({
+        target_type: z.enum(["SCHOOL", "CLASS", "COHORT", "ROLE"]),
+        target_id: z.string().optional(),
+      }),
+    ),
+  })
+  .superRefine((data, ctx) => {
+    if (data.publish_mode === "SCHEDULED" && !data.scheduled_at) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "A scheduled date and time is required.",
+        path: ["scheduled_at"],
+      });
+    }
+  });
 
 type AnnouncementFormValues = z.infer<typeof announcementSchema>;
 
@@ -63,6 +74,9 @@ function toFormValues(a: Announcement): AnnouncementFormValues {
     body: a.body,
     priority: a.priority,
     publish_mode: a.publish_mode,
+    scheduled_at: a.published_at && a.publish_mode === "SCHEDULED"
+      ? new Date(a.published_at).toISOString().slice(0, 16)
+      : "",
     expires_at: a.expires_at
       ? new Date(a.expires_at).toISOString().slice(0, 16)
       : "",
@@ -97,6 +111,7 @@ export function AnnouncementFormDialog({
     handleSubmit,
     control,
     reset,
+    watch,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<AnnouncementFormValues>({
@@ -106,12 +121,15 @@ export function AnnouncementFormDialog({
       body: "",
       priority: "NORMAL",
       publish_mode: "IMMEDIATE",
+      scheduled_at: "",
       expires_at: "",
       targets: [],
     },
   });
 
   const { fields, append, remove } = useFieldArray({ control, name: "targets" });
+
+  const publishMode = watch("publish_mode");
 
   const announcementQuery = useQuery({
     queryKey: schoolKeys.announcement(schoolId, announcement?.id ?? ""),
@@ -125,7 +143,15 @@ export function AnnouncementFormDialog({
     if (isEditing && announcementQuery.data) {
       reset(toFormValues(announcementQuery.data));
     } else if (!isEditing) {
-      reset({ title: "", body: "", priority: "NORMAL", publish_mode: "IMMEDIATE", expires_at: "", targets: [] });
+      reset({
+        title: "",
+        body: "",
+        priority: "NORMAL",
+        publish_mode: "IMMEDIATE",
+        scheduled_at: "",
+        expires_at: "",
+        targets: [],
+      });
     }
   }, [open, announcementQuery.data, isEditing, reset]);
 
@@ -150,6 +176,12 @@ export function AnnouncementFormDialog({
           version,
         });
       }
+
+      const published_at =
+        values.publish_mode === "SCHEDULED" && values.scheduled_at
+          ? new Date(values.scheduled_at).toISOString()
+          : undefined;
+
       return createAnnouncement({
         title: values.title,
         body: values.body,
@@ -157,6 +189,7 @@ export function AnnouncementFormDialog({
         publish_mode: values.publish_mode,
         targets,
         expires_at,
+        ...(published_at ? { published_at } : {}),
       });
     },
     onSuccess: (saved) => {
@@ -270,25 +303,39 @@ export function AnnouncementFormDialog({
                     </div>
                   )}
                 />
-                {!isEditing && (
-                  <Controller
-                    control={control}
-                    name="publish_mode"
-                    render={({ field }) => (
-                      <div className="space-y-1.5">
-                        <Label htmlFor="publish_mode">Publish mode</Label>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger id="publish_mode" className="w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="IMMEDIATE">Immediate</SelectItem>
-                            <SelectItem value="SCHEDULED">Scheduled</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                <Controller
+                  control={control}
+                  name="publish_mode"
+                  render={({ field }) => (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="publish_mode">Publish mode</Label>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger id="publish_mode" className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="IMMEDIATE">Immediate</SelectItem>
+                          <SelectItem value="SCHEDULED">Scheduled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                />
+                {publishMode === "SCHEDULED" && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="scheduled_at">Publish at *</Label>
+                    <Input
+                      id="scheduled_at"
+                      type="datetime-local"
+                      aria-invalid={!!errors.scheduled_at}
+                      {...register("scheduled_at")}
+                    />
+                    {errors.scheduled_at && (
+                      <p className="text-xs text-destructive" role="alert">
+                        {errors.scheduled_at.message}
+                      </p>
                     )}
-                  />
+                  </div>
                 )}
                 <div className="space-y-1.5">
                   <Label htmlFor="expires_at">Expires at (optional)</Label>

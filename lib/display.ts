@@ -7,6 +7,8 @@ export const STATUS_LABELS: Record<string, string> = {
   DECEASED: "Deceased",
   MERGED: "Merged",
   DRAFT: "Draft",
+  PUBLISHED: "Published",
+  EXPIRED: "Expired",
   CLOSED: "Closed",
   ARCHIVED: "Archived",
   SETUP: "Setting up",
@@ -21,6 +23,10 @@ export const STATUS_LABELS: Record<string, string> = {
   ON_LEAVE: "On leave",
   RESIGNED: "Resigned",
   TERMINATED: "Terminated",
+  WITHDRAWN: "Withdrawn",
+  GRADUATED: "Graduated",
+  TRANSFERRED: "Transferred",
+  COMPLETED: "Completed",
 };
 
 export const ASSIGNMENT_ROLE_LABELS: Record<string, string> = {
