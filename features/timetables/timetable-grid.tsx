@@ -49,17 +49,24 @@ export function TimetableGrid({ cohortId, academicYearId, subjects }: TimetableG
   });
   const periods = (periodsPage?.items ?? []).sort((a, b) => a.sort_order - b.sort_order);
 
+  const slotsQueryKey = schoolKeys.timetableSlots(schoolId, {
+    cohort_id: cohortId,
+    academic_year_id: academicYearId,
+  });
+
   const { data: slotsPage, isLoading: slotsLoading } = useQuery({
-    queryKey: schoolKeys.timetableSlots(schoolId, { cohort_id: cohortId, academic_year_id: academicYearId }),
+    queryKey: slotsQueryKey,
     queryFn: () => listTimetableSlots({ cohort_id: cohortId, academic_year_id: academicYearId }),
     enabled: !!schoolId && !!cohortId && !!academicYearId,
     staleTime: STALE_TIME.frequent,
   });
   const slots = slotsPage?.items ?? [];
 
+  // Show ACTIVE and SUBSTITUTED slots — SUBSTITUTED means another slot is covering it,
+  // but it still represents an assigned time that should be visible.
   const slotMap = new Map<string, TimetableSlot>();
   for (const slot of slots) {
-    if (slot.status === "ACTIVE") {
+    if (slot.status === "ACTIVE" || slot.status === "SUBSTITUTED") {
       slotMap.set(`${slot.period_definition_id}:${slot.day_of_week}`, slot);
     }
   }
@@ -67,10 +74,18 @@ export function TimetableGrid({ cohortId, academicYearId, subjects }: TimetableG
   async function handleCancel() {
     if (!cancelSlot) return;
     try {
-      await cancelTimetableSlot(cancelSlot.id);
+      // The DELETE endpoint returns the updated (cancelled) slot — use it to update the cache
+      // immediately so the grid reflects the change without a full refetch.
+      const cancelled = await cancelTimetableSlot(cancelSlot.id);
+      queryClient.setQueryData(slotsQueryKey, (old: typeof slotsPage) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.map((s) => (s.id === cancelled.id ? cancelled : s)),
+        };
+      });
       toast.success("Timetable slot cancelled");
       setCancelSlot(null);
-      void queryClient.invalidateQueries({ queryKey: schoolKeys.timetableSlots(schoolId) });
     } catch (error) {
       showMutationError(error);
     }
@@ -132,12 +147,22 @@ export function TimetableGrid({ cohortId, academicYearId, subjects }: TimetableG
                       <button
                         type="button"
                         onClick={() => setEditSlot(slot)}
-                        className="w-full rounded p-1 text-left hover:bg-accent transition-colors"
+                        className={`w-full rounded p-1 text-left hover:bg-accent transition-colors ${
+                          slot.status === "SUBSTITUTED"
+                            ? "opacity-60 ring-1 ring-yellow-400"
+                            : ""
+                        }`}
+                        title={slot.status === "SUBSTITUTED" ? "Substituted" : undefined}
                       >
                         <p className="font-medium truncate">{slot.subject_name ?? "—"}</p>
                         <p className="text-xs text-muted-foreground truncate">
                           {slot.teacher_name ?? "—"}
                         </p>
+                        {slot.status === "SUBSTITUTED" && (
+                          <p className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
+                            Substituted
+                          </p>
+                        )}
                       </button>
                     ) : (
                       <PermissionGate permission={PERMISSIONS.timetables.slot.create}>
