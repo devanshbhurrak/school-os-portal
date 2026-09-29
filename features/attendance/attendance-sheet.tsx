@@ -145,7 +145,7 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
       toast.success("Attendance saved");
       void queryClient.invalidateQueries({ queryKey: schoolKeys.attendanceRecords(schoolId, sessionId) });
     },
-    onError: showMutationError,
+    onError: (e: unknown) => showMutationError(e),
   });
 
   const submitMutation = useMutation({
@@ -154,7 +154,7 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
       toast.success("Attendance submitted");
       void queryClient.invalidateQueries({ queryKey: schoolKeys.attendanceSession(schoolId, sessionId) });
     },
-    onError: showMutationError,
+    onError: (e: unknown) => showMutationError(e),
   });
 
   const amendMutation = useMutation({
@@ -163,7 +163,7 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
       toast.success("Session re-opened for amendments");
       void queryClient.invalidateQueries({ queryKey: schoolKeys.attendanceSession(schoolId, sessionId) });
     },
-    onError: showMutationError,
+    onError: (e: unknown) => showMutationError(e),
   });
 
   if (sessionLoading || recordsLoading) {

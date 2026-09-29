@@ -393,7 +393,7 @@ export function AssignmentTab({ teacherId }: AssignmentTabProps) {
         }
         confirmLabel="End assignment"
         destructive
-        onConfirm={() => ending && endMutation.mutate(ending)}
+        onConfirm={() => { if (ending) endMutation.mutate(ending); }}
       />
     </div>
   );

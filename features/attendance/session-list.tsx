@@ -92,7 +92,7 @@ export function SessionList() {
       void queryClient.invalidateQueries({ queryKey: schoolKeys.attendanceSessions(schoolId) });
       router.push(`/attendance/${session.id}`);
     },
-    onError: showMutationError,
+    onError: (e: unknown) => showMutationError(e),
   });
 
   return (

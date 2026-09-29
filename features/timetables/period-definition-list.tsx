@@ -70,7 +70,7 @@ const periodSchema = z.object({
   sort_order: z.coerce.number().int().default(0),
 });
 
-type PeriodFormValues = z.infer<typeof periodSchema>;
+type PeriodFormValues = z.output<typeof periodSchema>;
 
 interface PeriodDefinitionListProps {
   academicYearId: string;
@@ -106,7 +106,8 @@ export function PeriodDefinitionList({ academicYearId }: PeriodDefinitionListPro
     reset,
     formState: { errors, isSubmitting },
   } = useForm<PeriodFormValues>({
-    resolver: zodResolver(periodSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(periodSchema) as any,
     defaultValues: { period_type: "LESSON", sort_order: 0 },
   });
 
@@ -145,7 +146,7 @@ export function PeriodDefinitionList({ academicYearId }: PeriodDefinitionListPro
       void queryClient.invalidateQueries({ queryKey: schoolKeys.periodDefinitions(schoolId, academicYearId) });
       setFormOpen(false);
     },
-    onError: showMutationError,
+    onError: (e: unknown) => showMutationError(e),
   });
 
   async function handleDelete() {
@@ -226,7 +227,7 @@ export function PeriodDefinitionList({ academicYearId }: PeriodDefinitionListPro
           </DialogHeader>
           <form
             id="period-form"
-            onSubmit={handleSubmit((v) => saveMutation.mutateAsync(v))}
+            onSubmit={handleSubmit((v) => saveMutation.mutateAsync(v as PeriodFormValues))}
             className="space-y-4"
           >
             <div className="space-y-1.5">

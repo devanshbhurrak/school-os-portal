@@ -187,7 +187,7 @@ export function SlotFormDialog({
     },
     onError: (error: unknown) => {
       if (error instanceof ApiError) {
-        const code = error.envelope.code;
+        const code = error.code;
         if (code === "TEACHER_CONFLICT") {
           setError("teacher_id", { message: "This teacher already has a slot at this period and day." });
           return;
