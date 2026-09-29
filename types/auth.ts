@@ -38,6 +38,7 @@ export interface MeResponse {
   is_platform_admin: boolean;
   organization_id: ID | null;
   school_id: ID | null;
+  accessible_school_ids: ID[];
   role_codes: string[];
   permissions: string[];
   must_change_password: boolean;

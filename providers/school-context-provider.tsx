@@ -10,8 +10,8 @@ import {
 } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { setSchoolId } from "@/services/api-client";
-import { listAcademicYears, listMemberships, listSchools } from "@/services";
-import type { AcademicYear, Membership, School } from "@/types";
+import { listAcademicYears, listSchools } from "@/services";
+import type { AcademicYear, School } from "@/types";
 import { MAX_PAGE_SIZE, STORAGE_KEYS } from "@/lib/constants";
 import { STALE_TIME } from "@/lib/constants";
 import { useAuthContext } from "./auth-provider";
@@ -30,10 +30,6 @@ interface SchoolContextValue {
 
 const SchoolContext = createContext<SchoolContextValue | null>(null);
 
-function isActive(membership: Membership): boolean {
-  return membership.status === "ACTIVE";
-}
-
 export function SchoolContextProvider({
   children,
 }: {
@@ -44,15 +40,6 @@ export function SchoolContextProvider({
   const [activeSchoolId, setActiveSchoolIdState] = useState<string | null>(null);
   const [activeYearId, setActiveYearIdState] = useState<string | null>(null);
 
-  const membershipsQuery = useQuery({
-    queryKey: ["org", "memberships", { user_id: user?.user_id }],
-    queryFn: () =>
-      listMemberships({ user_id: user?.user_id, limit: MAX_PAGE_SIZE }),
-    enabled: !!user?.user_id,
-    staleTime: STALE_TIME.auth,
-    select: (data) => data.items,
-  });
-
   const schoolsQuery = useQuery({
     queryKey: ["org", "schools"],
     queryFn: () => listSchools({ limit: MAX_PAGE_SIZE }),
@@ -61,20 +48,17 @@ export function SchoolContextProvider({
     select: (data) => data.items,
   });
 
-  const memberships = useMemo(() => membershipsQuery.data ?? [], [membershipsQuery.data]);
   const allSchools = useMemo(() => schoolsQuery.data ?? [], [schoolsQuery.data]);
 
+  // Use accessible_school_ids from /auth/me to filter without an extra memberships fetch.
+  // Platform admins have is_platform_admin=true and see all schools regardless.
   const accessibleSchools = useMemo(() => {
     if (!user) return [];
-    const hasOrgWideAccess = memberships.some(
-      (m) => m.school_id === null && isActive(m),
-    );
-    if (hasOrgWideAccess) return allSchools;
-    const membershipSchoolIds = new Set(
-      memberships.filter(isActive).map((m) => m.school_id).filter(Boolean),
-    );
-    return allSchools.filter((school) => membershipSchoolIds.has(school.id));
-  }, [user, memberships, allSchools]);
+    if (user.is_platform_admin) return allSchools;
+    const accessibleIds = new Set(user.accessible_school_ids);
+    if (accessibleIds.size === 0) return allSchools; // fallback: show all
+    return allSchools.filter((school) => accessibleIds.has(school.id));
+  }, [user, allSchools]);
 
   const activeSchool = useMemo(
     () => accessibleSchools.find((s) => s.id === activeSchoolId) ?? null,
@@ -174,7 +158,7 @@ export function SchoolContextProvider({
   const value = useMemo<SchoolContextValue>(
     () => ({
       schools: accessibleSchools,
-      isLoadingSchools: membershipsQuery.isPending || schoolsQuery.isPending,
+      isLoadingSchools: schoolsQuery.isPending,
       activeSchool,
       setActiveSchoolId,
       years,
@@ -185,7 +169,6 @@ export function SchoolContextProvider({
     }),
     [
       accessibleSchools,
-      membershipsQuery.isPending,
       schoolsQuery.isPending,
       activeSchool,
       setActiveSchoolId,

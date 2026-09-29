@@ -11,6 +11,6 @@ export * from "./enrollments";
 export * from "./guardians";
 export * from "./announcements";
 export * from "./teachers";
-export * from "./timetables"
+export * from "./timetables";
 export * from "./attendance";
 export * from "./import-jobs";
