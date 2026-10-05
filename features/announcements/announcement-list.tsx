@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Announcement, AnnouncementPriority, AnnouncementStatus } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { useCursorPagination } from "@/hooks/use-cursor-pagination";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
@@ -58,7 +58,7 @@ function targetSummary(announcement: Announcement): string {
 }
 
 export function AnnouncementList({ initialNew = false }: { initialNew?: boolean }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { listImportJobs } from "@/services/import-jobs";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PermissionGate } from "@/components/ui/permission-gate";
@@ -33,7 +33,7 @@ function StatusBadge({ status }: { status: ImportJob["status"] }) {
 }
 
 export function ImportHistory() {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? null;
   const [expandedId, setExpandedId] = useState<string | null>(null);
 

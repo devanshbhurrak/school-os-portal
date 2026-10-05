@@ -14,6 +14,7 @@ export interface PeriodDefinition {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  version: number;
 }
 
 export interface PeriodDefinitionCreate {
@@ -31,6 +32,7 @@ export interface PeriodDefinitionUpdate {
   start_time?: string;
   end_time?: string;
   sort_order?: number;
+  version: number;
 }
 
 export interface TimetableSlot {
@@ -75,6 +77,45 @@ export interface TimetableSlotUpdate {
   status?: TimetableSlotStatus;
   notes?: string | null;
   version: number;
+}
+
+export type TimetableStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
+export interface Timetable {
+  id: string;
+  school_id: string;
+  organization_id: string;
+  academic_year_id: string;
+  name: string;
+  status: TimetableStatus;
+  published_at: string | null;
+  archived_at: string | null;
+  created_at: string;
+  updated_at: string;
+  version: number;
+}
+
+export interface TimetableCreate {
+  academic_year_id: string;
+  name: string;
+}
+
+export interface TimetableUpdate {
+  name?: string;
+  version: number;
+}
+
+export interface ConflictItem {
+  conflict_type: string;
+  day_of_week: string;
+  period: string;
+  entity_name: string;
+  details: string;
+}
+
+export interface PublishResult {
+  success: boolean;
+  conflicts: ConflictItem[];
 }
 
 export interface TimetableSlotListParams {

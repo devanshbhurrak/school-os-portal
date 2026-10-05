@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { deleteTeacher, listTeachers } from "@/services";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Teacher, TeacherStatus } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { useCursorPagination } from "@/hooks/use-cursor-pagination";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
@@ -43,7 +43,7 @@ function teacherDisplayName(teacher: Teacher): string {
 }
 
 export function TeacherList({ initialNew = false }: { initialNew?: boolean }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();

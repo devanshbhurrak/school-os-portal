@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Building2, Check, ChevronsUpDown, Search } from "lucide-react";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
  */
 export function SchoolSelector({ className }: { className?: string }) {
   const { schools, activeSchool, setActiveSchoolId, isLoadingSchools } =
-    useSchoolContextValue();
+    useSchoolContext();
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -119,7 +119,7 @@ export function SchoolSelector({ className }: { className?: string }) {
 
 /** Submenu variant for the user menu (switch school while staying put). */
 export function SchoolSelectorSubmenu() {
-  const { schools, activeSchool, setActiveSchoolId } = useSchoolContextValue();
+  const { schools, activeSchool, setActiveSchoolId } = useSchoolContext();
   if (schools.length <= 1) return null;
   return (
     <DropdownMenuSub>

@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Briefcase, Calendar, Hash, Mail, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteTeacher, getTeacher } from "@/services";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -42,7 +42,7 @@ function teacherDisplayName(firstName: string, lastName?: string | null) {
 }
 
 export function TeacherProfile({ teacherId }: { teacherId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();

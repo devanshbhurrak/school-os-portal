@@ -18,6 +18,7 @@ import {
   UserRoundCog,
   UserRoundPen,
   Users,
+  UsersRound,
   type LucideIcon,
 } from "lucide-react";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -60,6 +61,13 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: Users,
         permission: PERMISSIONS.person.list,
         match: ["/people"],
+      },
+      {
+        href: "/parents",
+        label: "Parents",
+        icon: UsersRound,
+        permission: PERMISSIONS.parent.list,
+        match: ["/parents"],
       },
       {
         href: "/teachers",
@@ -207,7 +215,6 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/settings/audit",
         label: "Audit Log",
         icon: History,
-        permission: PERMISSIONS.role.read,
         match: ["/settings/audit"],
       },
     ],
@@ -218,6 +225,7 @@ export const NAV_GROUPS: NavGroup[] = [
 export const SEGMENT_LABELS: Record<string, string> = {
   home: "Home",
   students: "Students",
+  parents: "Parents",
   people: "People",
   academics: "Academics",
   years: "Academic Years",

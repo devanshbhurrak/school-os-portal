@@ -114,6 +114,17 @@ export const PERMISSIONS = {
     update: "students.guardian.update",
     delete: "students.guardian.delete",
   },
+  parent: {
+    list: "parents.parent.list",
+    read: "parents.parent.read",
+    create: "parents.parent.create",
+    update: "parents.parent.update",
+    delete: "parents.parent.delete",
+  },
+  studentParent: {
+    create: "parents.student_parent.create",
+    delete: "parents.student_parent.delete",
+  },
   enrollment: {
     list: "students.enrollment.list",
     read: "students.enrollment.read",
@@ -155,7 +166,25 @@ export const PERMISSIONS = {
       create: "bulk_import.export.create",
     },
   },
+  report: {
+    create: "reports.export.create",
+    list: "reports.export.list",
+    read: "reports.export.read",
+  },
+  document: {
+    list: "documents.document.list",
+    create: "documents.document.create",
+    read: "documents.document.read",
+    delete: "documents.document.delete",
+  },
   timetables: {
+    timetable: {
+      list: "timetables.timetable.list",
+      read: "timetables.timetable.read",
+      create: "timetables.timetable.create",
+      update: "timetables.timetable.update",
+      delete: "timetables.timetable.delete",
+    },
     period: {
       list: "timetables.period.list",
       read: "timetables.period.read",
@@ -170,6 +199,10 @@ export const PERMISSIONS = {
       update: "timetables.slot.update",
       delete: "timetables.slot.delete",
     },
+  },
+  notification: {
+    list: "notifications.notification.list",
+    update: "notifications.notification.update",
   },
   attendance: {
     session: {
@@ -236,6 +269,31 @@ export const PERMISSION_CATALOGUE: {
           { code: PERMISSIONS.enrollment.update, label: "Edit" },
           { code: PERMISSIONS.enrollment.delete, label: "Delete" },
           { code: PERMISSIONS.enrollment.transfer, label: "Transfer" },
+        ],
+      },
+    ],
+  },
+  {
+    module: "parents",
+    moduleLabel: "Parents",
+    resources: [
+      {
+        resource: "parent",
+        resourceLabel: "Parents",
+        actions: [
+          { code: PERMISSIONS.parent.list, label: "View list" },
+          { code: PERMISSIONS.parent.read, label: "View details" },
+          { code: PERMISSIONS.parent.create, label: "Add" },
+          { code: PERMISSIONS.parent.update, label: "Edit" },
+          { code: PERMISSIONS.parent.delete, label: "Delete" },
+        ],
+      },
+      {
+        resource: "student_parent",
+        resourceLabel: "Student-parent links",
+        actions: [
+          { code: PERMISSIONS.studentParent.create, label: "Link" },
+          { code: PERMISSIONS.studentParent.delete, label: "Unlink" },
         ],
       },
     ],
@@ -384,6 +442,17 @@ export const PERMISSION_CATALOGUE: {
     moduleLabel: "Timetables",
     resources: [
       {
+        resource: "timetable",
+        resourceLabel: "Timetables",
+        actions: [
+          { code: PERMISSIONS.timetables.timetable.list, label: "View list" },
+          { code: PERMISSIONS.timetables.timetable.read, label: "View details" },
+          { code: PERMISSIONS.timetables.timetable.create, label: "Create" },
+          { code: PERMISSIONS.timetables.timetable.update, label: "Edit / Publish / Archive" },
+          { code: PERMISSIONS.timetables.timetable.delete, label: "Delete" },
+        ],
+      },
+      {
         resource: "period",
         resourceLabel: "Period definitions",
         actions: [
@@ -499,6 +568,20 @@ export const PERMISSION_CATALOGUE: {
     ],
   },
   {
+    module: "notifications",
+    moduleLabel: "Notifications",
+    resources: [
+      {
+        resource: "notification",
+        resourceLabel: "Notifications",
+        actions: [
+          { code: PERMISSIONS.notification.list, label: "View notifications" },
+          { code: PERMISSIONS.notification.update, label: "Mark as read" },
+        ],
+      },
+    ],
+  },
+  {
     module: "announcements",
     moduleLabel: "Communication",
     resources: [
@@ -535,6 +618,37 @@ export const PERMISSION_CATALOGUE: {
         resourceLabel: "Data export",
         actions: [
           { code: PERMISSIONS.bulkImport.export.create, label: "Export to CSV" },
+        ],
+      },
+    ],
+  },
+  {
+    module: "reports",
+    moduleLabel: "Reports",
+    resources: [
+      {
+        resource: "export",
+        resourceLabel: "CSV Export",
+        actions: [
+          { code: PERMISSIONS.report.list, label: "View export jobs" },
+          { code: PERMISSIONS.report.read, label: "View export details" },
+          { code: PERMISSIONS.report.create, label: "Create export" },
+        ],
+      },
+    ],
+  },
+  {
+    module: "documents",
+    moduleLabel: "Documents",
+    resources: [
+      {
+        resource: "document",
+        resourceLabel: "Documents",
+        actions: [
+          { code: PERMISSIONS.document.list, label: "View list" },
+          { code: PERMISSIONS.document.read, label: "View / Download" },
+          { code: PERMISSIONS.document.create, label: "Upload" },
+          { code: PERMISSIONS.document.delete, label: "Delete" },
         ],
       },
     ],

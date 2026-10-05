@@ -14,7 +14,7 @@ import {
   listSubjects,
 } from "@/services";
 import type { ClassSubject, ClassSubjectCreate } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { MAX_PAGE_SIZE } from "@/lib/constants";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
@@ -234,7 +234,7 @@ function AssignSubjectDialog({
 }
 
 export function SubjectAssignmentsPage() {
-  const { activeSchool, years } = useSchoolContextValue();
+  const { activeSchool, years } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();

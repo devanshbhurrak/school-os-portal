@@ -9,7 +9,7 @@ import { PlusCircle, ArrowRightLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { listEnrollments, createEnrollment, listCohorts } from "@/services";
 import type { Enrollment } from "@/types/student";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatDate } from "@/lib/format";
@@ -79,7 +79,7 @@ function EnrollDialog({
   activeYearId,
   onEnrolled,
 }: EnrollDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
 
   const {
@@ -271,7 +271,7 @@ interface EnrollmentTabProps {
 }
 
 export function EnrollmentTab({ studentId }: EnrollmentTabProps) {
-  const { activeSchool, activeYear } = useSchoolContextValue();
+  const { activeSchool, activeYear } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();
 

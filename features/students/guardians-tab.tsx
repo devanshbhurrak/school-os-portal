@@ -6,7 +6,7 @@ import { Mail, Pencil, Phone, Plus, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { listGuardians, removeGuardian } from "@/services";
 import type { Guardian } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
 import { showMutationError } from "@/lib/error-messages";
@@ -99,7 +99,7 @@ function GuardianCard({ guardian, onEdit, onRemove }: GuardianCardProps) {
 }
 
 export function GuardiansTab({ studentId }: { studentId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();
 
@@ -109,13 +109,13 @@ export function GuardiansTab({ studentId }: { studentId: string }) {
 
   const { data: guardians, isLoading, isError, error, refetch } = useQuery({
     queryKey: schoolKeys.guardians(schoolId, studentId),
-    queryFn: () => listGuardians(schoolId, studentId),
+    queryFn: () => listGuardians(studentId),
     enabled: !!schoolId && !!studentId,
     staleTime: STALE_TIME.entity,
   });
 
   const removeMutation = useMutation({
-    mutationFn: (id: string) => removeGuardian(schoolId, id),
+    mutationFn: (id: string) => removeGuardian(id),
     onSuccess: () => {
       toast.success("Guardian removed");
       void queryClient.invalidateQueries({ queryKey: schoolKeys.guardians(schoolId, studentId) });

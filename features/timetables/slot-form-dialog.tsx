@@ -14,7 +14,7 @@ import {
   listTeachers,
 } from "@/services";
 import type { PeriodDefinition, TimetableSlot } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { mapFieldErrors, showMutationError, isStaleResourceError } from "@/lib/error-messages";
 import {
@@ -85,7 +85,7 @@ export function SlotFormDialog({
   prefillDay,
   prefillPeriodId,
 }: SlotFormDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();
   const isEdit = !!slot;

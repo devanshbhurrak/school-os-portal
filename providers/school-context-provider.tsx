@@ -13,7 +13,7 @@ import { setSchoolId } from "@/services/api-client";
 import { listAcademicYears, listSchools } from "@/services";
 import type { AcademicYear, School } from "@/types";
 import { MAX_PAGE_SIZE, STORAGE_KEYS } from "@/lib/constants";
-import { STALE_TIME } from "@/lib/constants";
+import { STALE_TIME } from "@/lib/query-keys";
 import { useAuthContext } from "./auth-provider";
 
 interface SchoolContextValue {
@@ -56,7 +56,7 @@ export function SchoolContextProvider({
     if (!user) return [];
     if (user.is_platform_admin) return allSchools;
     const accessibleIds = new Set(user.accessible_school_ids);
-    if (accessibleIds.size === 0) return allSchools; // fallback: show all
+    if (accessibleIds.size === 0) return []; // no accessible schools
     return allSchools.filter((school) => accessibleIds.has(school.id));
   }, [user, allSchools]);
 

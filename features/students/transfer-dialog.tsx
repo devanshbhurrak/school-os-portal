@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { transferEnrollment, listCohorts } from "@/services";
 import type { Enrollment } from "@/types/student";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { showMutationError } from "@/lib/error-messages";
 import {
@@ -54,7 +54,7 @@ export function TransferDialog({
   enrollment,
   onTransferred,
 }: TransferDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();
 
@@ -104,6 +104,7 @@ export function TransferDialog({
         new_academic_class_id: values.new_academic_class_id,
         effective_date: values.effective_date,
         reason: values.reason || undefined,
+        version: enrollment.version,
       }),
     onSuccess: (newEnrollment) => {
       toast.success("Student transferred successfully");

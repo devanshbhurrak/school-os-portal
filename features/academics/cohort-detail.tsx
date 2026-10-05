@@ -17,7 +17,7 @@ import {
   updateCohort,
 } from "@/services";
 import type { Cohort, CohortCreate, CohortUpdate } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { MAX_PAGE_SIZE } from "@/lib/constants";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
@@ -50,7 +50,7 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
 type Tab = "overview" | "subjects";
 
 export function CohortDetailPage({ cohortId }: { cohortId: string }) {
-  const { activeSchool, years } = useSchoolContextValue();
+  const { activeSchool, years } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();

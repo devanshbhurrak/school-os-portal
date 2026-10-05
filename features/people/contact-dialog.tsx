@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { createContact, updateContact } from "@/services";
 import type { Contact, EntityType } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys } from "@/lib/query-keys";
 import {
   mapFieldErrors,
@@ -51,7 +51,7 @@ export function ContactDialog({
   entityId,
   contact,
 }: ContactDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const isEditing = !!contact;
   const queryClient = useQueryClient();

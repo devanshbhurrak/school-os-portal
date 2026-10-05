@@ -7,7 +7,7 @@ import { ArrowLeft, GraduationCap, Mail, Pencil, Phone, Trash2 } from "lucide-re
 import { toast } from "sonner";
 import { deleteStudent, getStudent } from "@/services";
 import type { Student } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -40,7 +40,7 @@ function studentDisplayName(student: Student): string {
 }
 
 export function StudentProfile({ studentId }: { studentId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { GC_TIME, STALE_TIME } from "@/lib/constants";
+import { GC_TIME } from "@/lib/constants";
+import { STALE_TIME } from "@/lib/query-keys";
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(

@@ -21,4 +21,6 @@ export interface ImportJob {
   started_at: string | null
   completed_at: string | null
   created_at: string
+  updated_at: string
+  organization_id: string
 }

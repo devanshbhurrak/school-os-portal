@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, GraduationCap, Search } from "lucide-react";
+import { GraduationCap, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { SchoolSelector } from "./school-selector";
 import { YearSelector } from "./year-selector";
 import { UserMenu } from "./user-menu";
+import { NotificationBell } from "@/features/notifications/notification-bell";
 
 interface HeaderProps {
   onSearchClick?: () => void;
@@ -49,20 +49,7 @@ export function Header({ onSearchClick }: HeaderProps) {
         </kbd>
       </Button>
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground"
-            disabled
-            aria-label="Notifications (coming soon)"
-          >
-            <Bell className="size-4.5" aria-hidden />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Notifications are coming soon</TooltipContent>
-      </Tooltip>
+      <NotificationBell />
 
       <UserMenu />
     </header>

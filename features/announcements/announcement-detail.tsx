@@ -11,7 +11,7 @@ import {
   getAnnouncement,
   publishAnnouncement,
 } from "@/services/announcements";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatDate } from "@/lib/format";
@@ -38,7 +38,7 @@ const PRIORITY_LABELS: Record<AnnouncementPriority, string> = {
 };
 
 export function AnnouncementDetail({ announcementId }: { announcementId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();
   const queryClient = useQueryClient();

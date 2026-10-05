@@ -34,6 +34,10 @@ export const orgKeys = {
     ["org", "memberships", membershipId] as const,
   organizations: (params: CursorParams = {}) =>
     ["org", "organizations", params] as const,
+  notifications: (orgId: string, params?: Record<string, unknown>) =>
+    ["org", orgId, "notifications", params] as const,
+  unreadCount: (orgId: string) =>
+    ["org", orgId, "notifications", "unread-count"] as const,
 };
 
 /** School-scoped — all removed from cache when the active school changes. */
@@ -98,6 +102,10 @@ export const schoolKeys = {
     ["school", schoolId, "teachers", teacherId] as const,
   teacherAssignments: (schoolId: string, params: AssignmentListParams = {}) =>
     ["school", schoolId, "teacher-assignments", params] as const,
+  timetables: (schoolId: string, params?: Record<string, unknown>) =>
+    ["school", schoolId, "timetables", params] as const,
+  timetable: (schoolId: string, timetableId: string) =>
+    ["school", schoolId, "timetables", timetableId] as const,
   periodDefinitions: (schoolId: string, academicYearId?: string) =>
     ["school", schoolId, "period-definitions", academicYearId] as const,
   timetableSlots: (schoolId: string, params?: TimetableSlotListParams) =>
@@ -110,6 +118,14 @@ export const schoolKeys = {
     [...schoolKeys.all(schoolId), "enrollment", id] as const,
   guardians: (schoolId: string, studentId: string) => [...schoolKeys.all(schoolId), "guardians", studentId] as const,
   guardian: (schoolId: string, id: string) => [...schoolKeys.all(schoolId), "guardian", id] as const,
+  parents: (schoolId: string, params?: Record<string, unknown>) =>
+    ["school", schoolId, "parents", params] as const,
+  parent: (schoolId: string, parentId: string) =>
+    ["school", schoolId, "parents", parentId] as const,
+  parentChildren: (schoolId: string, parentId: string) =>
+    ["school", schoolId, "parents", parentId, "children"] as const,
+  studentParents: (schoolId: string, studentId: string) =>
+    ["school", schoolId, "students", studentId, "parents"] as const,
   attendanceSessions: (schoolId: string, params?: Record<string, unknown>) =>
     [...schoolKeys.all(schoolId), "attendance-sessions", params] as const,
   attendanceSession: (schoolId: string, id: string) =>
@@ -118,11 +134,20 @@ export const schoolKeys = {
     [...schoolKeys.all(schoolId), "attendance-records", sessionId] as const,
   studentAttendance: (schoolId: string, studentId: string) =>
     [...schoolKeys.all(schoolId), "student-attendance", studentId] as const,
+  studentCounts: (schoolId: string) => ["school", schoolId, "students", "counts"] as const,
+  teacherCounts: (schoolId: string) => ["school", schoolId, "teachers", "counts"] as const,
+  attendanceTodaySummary: (schoolId: string) => ["school", schoolId, "attendance", "today-summary"] as const,
   all: (schoolId: string) => ["school", schoolId] as const,
   importJobs: (schoolId: string, params?: Record<string, unknown>) =>
     [...schoolKeys.all(schoolId), "import-jobs", params] as const,
   importJob: (schoolId: string, id: string) =>
     [...schoolKeys.all(schoolId), "import-job", id] as const,
+  exportJobs: (schoolId: string, params?: Record<string, unknown>) =>
+    ["school", schoolId, "export-jobs", params] as const,
+  exportJob: (schoolId: string, jobId: string) =>
+    ["school", schoolId, "export-jobs", jobId] as const,
+  documents: (schoolId: string, params?: Record<string, unknown>) =>
+    ["school", schoolId, "documents", params] as const,
 };
 
 /** Platform-admin scoped — cross-org, no school context. */

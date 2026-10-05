@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarRange, Check, ChevronsUpDown } from "lucide-react";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 /** Academic year selector — auto-selects the `is_current` year. */
 export function YearSelector({ className }: { className?: string }) {
   const { years, activeYear, setActiveYearId, isLoadingYears } =
-    useSchoolContextValue();
+    useSchoolContext();
 
   if (isLoadingYears && !years.length) {
     return <Skeleton className={cn("h-7 w-28", className)} />;

@@ -193,3 +193,11 @@ export async function updateOrganization(
   const { data } = await apiClient.patch<Organization>(`/organizations/${id}`, input);
   return data;
 }
+
+export async function deleteSchool(schoolId: string, version: number): Promise<void> {
+  await apiClient.delete(`/schools/${schoolId}`, { data: { version } });
+}
+
+export async function deleteOrganization(organizationId: string, version: number): Promise<void> {
+  await apiClient.delete(`/organizations/${organizationId}`, { data: { version } });
+}

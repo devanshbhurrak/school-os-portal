@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { listPeriodDefinitions, listTimetableSlots, cancelTimetableSlot } from "@/services";
 import type { PeriodDefinition, TimetableSlot } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -32,7 +32,7 @@ interface TimetableGridProps {
 }
 
 export function TimetableGrid({ cohortId, academicYearId, subjects }: TimetableGridProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();

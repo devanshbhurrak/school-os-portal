@@ -12,7 +12,7 @@ import {
   bulkUpdateRecords,
 } from "@/services/attendance";
 import type { AttendanceRecord, AttendanceStatus } from "@/types/attendance";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatDate } from "@/lib/format";
@@ -63,7 +63,7 @@ interface LocalRecord {
 }
 
 export function AttendanceSheet({ sessionId }: { sessionId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();
 
@@ -72,14 +72,14 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
 
   const { data: session, isLoading: sessionLoading, isError, error, refetch } = useQuery({
     queryKey: schoolKeys.attendanceSession(schoolId, sessionId),
-    queryFn: () => getSession(schoolId, sessionId),
+    queryFn: () => getSession(sessionId),
     enabled: !!schoolId,
     staleTime: STALE_TIME.entity,
   });
 
   const { data: records, isLoading: recordsLoading } = useQuery({
     queryKey: schoolKeys.attendanceRecords(schoolId, sessionId),
-    queryFn: () => listRecords(schoolId, sessionId),
+    queryFn: () => listRecords(sessionId),
     enabled: !!schoolId,
     staleTime: STALE_TIME.frequent,
   });
@@ -132,11 +132,11 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
 
   const saveMutation = useMutation({
     mutationFn: () =>
-      bulkUpdateRecords(schoolId, sessionId, {
+      bulkUpdateRecords(sessionId, {
         records: localRecords.map((r) => ({
           enrollment_id: r.enrollment_id,
           status: r.status,
-          arrived_at: r.arrived_at ?? null,
+          arrived_at: r.arrived_at?.slice(0, 8) ?? null,
           notes: r.notes,
         })),
       }),
@@ -149,7 +149,7 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
   });
 
   const submitMutation = useMutation({
-    mutationFn: () => submitSession(schoolId, sessionId, session!.version),
+    mutationFn: () => submitSession(sessionId, session!.version),
     onSuccess: () => {
       toast.success("Attendance submitted");
       void queryClient.invalidateQueries({ queryKey: schoolKeys.attendanceSession(schoolId, sessionId) });
@@ -158,7 +158,7 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
   });
 
   const amendMutation = useMutation({
-    mutationFn: () => amendSession(schoolId, sessionId, session!.version),
+    mutationFn: () => amendSession(sessionId, session!.version),
     onSuccess: () => {
       toast.success("Session re-opened for amendments");
       void queryClient.invalidateQueries({ queryKey: schoolKeys.attendanceSession(schoolId, sessionId) });

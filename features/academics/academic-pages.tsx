@@ -48,7 +48,7 @@ import {
   getAcademicClass,
   getSubject,
 } from "@/services";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { MAX_PAGE_SIZE } from "@/lib/constants";
 import { schoolKeys } from "@/lib/query-keys";
@@ -117,7 +117,7 @@ function yearColumns(activeYearId?: string): ColumnDef<DataTableFeatures, Academ
 }
 
 export function YearsPage() {
-  const { activeYear } = useSchoolContextValue();
+  const { activeYear } = useSchoolContext();
   const config: EntityListConfig<AcademicYear> = {
     permissions: {
       list: PERMISSIONS.academicYear.list,
@@ -261,7 +261,7 @@ function termColumns(): ColumnDef<DataTableFeatures, AcademicTerm, unknown>[] {
 }
 
 export function TermsPage() {
-  const { years } = useSchoolContextValue();
+  const { years } = useSchoolContext();
   const yearOptions = years.map((year) => ({ value: year.id, label: year.name }));
   const fields = termFields(yearOptions);
 
@@ -545,7 +545,7 @@ export function SubjectsPage() {
 }
 
 export function CohortsPage() {
-  const { years, activeSchool } = useSchoolContextValue();
+  const { years, activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const yearOptions = years.map((year) => ({ value: year.id, label: year.name }));

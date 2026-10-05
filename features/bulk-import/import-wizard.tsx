@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { uploadImport, downloadTemplate } from "@/services/import-jobs";
 import { PermissionGate } from "@/components/ui/permission-gate";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -38,7 +38,7 @@ function triggerBlobDownload(blob: Blob, filename: string) {
 }
 
 export function ImportWizard() {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? null;
   const fileInputRef = useRef<HTMLInputElement>(null);
 

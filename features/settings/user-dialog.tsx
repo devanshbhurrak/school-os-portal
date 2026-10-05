@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { createUser, updateUser, listSchools, getUser } from "@/services";
 import type { User, UserCreate, UserUpdate } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { orgKeys, STALE_TIME } from "@/lib/query-keys";
 import { STATUS_LABELS } from "@/lib/display";
 import {
@@ -55,7 +55,7 @@ interface UserDialogProps {
 export function UserDialog({ open, onOpenChange, user }: UserDialogProps) {
   const queryClient = useQueryClient();
   const { user: currentUser } = useAuth();
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const isPlatformAdmin = !!currentUser?.is_platform_admin;
   const [staleOpen, setStaleOpen] = useState(false);
   // Tracks the freshest user object (may be reloaded after a stale-resource error).

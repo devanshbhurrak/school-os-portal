@@ -4,11 +4,55 @@ import type {
   PeriodDefinition,
   PeriodDefinitionCreate,
   PeriodDefinitionUpdate,
+  PublishResult,
+  Timetable,
+  TimetableCreate,
   TimetableSlot,
   TimetableSlotCreate,
   TimetableSlotListParams,
   TimetableSlotUpdate,
+  TimetableUpdate,
 } from "@/types";
+
+// ---------------------------------------------------------------------------
+// Timetable Header
+// ---------------------------------------------------------------------------
+
+export async function listTimetables(
+  params?: { academic_year_id?: string; status?: string },
+): Promise<CursorPage<Timetable>> {
+  const { data } = await apiClient.get<CursorPage<Timetable>>("/timetables", { params });
+  return data;
+}
+
+export async function getTimetable(id: string): Promise<Timetable> {
+  const { data } = await apiClient.get<Timetable>(`/timetables/${id}`);
+  return data;
+}
+
+export async function createTimetable(payload: TimetableCreate): Promise<Timetable> {
+  const { data } = await apiClient.post<Timetable>("/timetables", payload);
+  return data;
+}
+
+export async function updateTimetable(id: string, payload: TimetableUpdate): Promise<Timetable> {
+  const { data } = await apiClient.patch<Timetable>(`/timetables/${id}`, payload);
+  return data;
+}
+
+export async function publishTimetable(id: string, version: number): Promise<PublishResult> {
+  const { data } = await apiClient.post<PublishResult>(`/timetables/${id}/publish`, { version });
+  return data;
+}
+
+export async function archiveTimetable(id: string, version: number): Promise<Timetable> {
+  const { data } = await apiClient.post<Timetable>(`/timetables/${id}/archive`, { version });
+  return data;
+}
+
+// ---------------------------------------------------------------------------
+// Period Definitions
+// ---------------------------------------------------------------------------
 
 export async function listPeriodDefinitions(
   academicYearId: string,

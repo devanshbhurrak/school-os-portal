@@ -9,7 +9,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { initials } from "@/lib/format";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import { SchoolSelectorSubmenu } from "./school-selector";
 
 export function UserMenu() {
   const { user, logout } = useAuth();
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const router = useRouter();
 
   const displayName = useMemo(() => {

@@ -21,7 +21,7 @@ import type {
 } from "@/types";
 import { orgKeys, STALE_TIME } from "@/lib/query-keys";
 import { mapFieldErrors, showMutationError } from "@/lib/error-messages";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { membershipFormSchema, type MembershipFormValues } from "./schemas";
 import { MultiSelect } from "@/components/patterns/multi-select";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ export function MembershipCreateDialog({
   userId,
 }: MembershipCreateDialogProps) {
   const queryClient = useQueryClient();
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
 
   const schoolsQuery = useQuery({
     queryKey: orgKeys.schools(),

@@ -14,7 +14,7 @@ import {
   updatePeriodDefinition,
 } from "@/services";
 import type { PeriodDefinition } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
 import { showMutationError } from "@/lib/error-messages";
@@ -77,7 +77,7 @@ interface PeriodDefinitionListProps {
 }
 
 export function PeriodDefinitionList({ academicYearId }: PeriodDefinitionListProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();
 
@@ -137,7 +137,7 @@ export function PeriodDefinitionList({ academicYearId }: PeriodDefinitionListPro
         end_time: values.end_time + ":00",
       };
       if (editing) {
-        return updatePeriodDefinition(editing.id, payload);
+        return updatePeriodDefinition(editing.id, { ...payload, version: editing.version });
       }
       return createPeriodDefinition({ ...payload, academic_year_id: academicYearId });
     },

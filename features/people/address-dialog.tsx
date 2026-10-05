@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { createAddress, updateAddress } from "@/services";
 import type { Address, EntityType } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys } from "@/lib/query-keys";
 import { COUNTRY_CODES } from "@/lib/display";
 import {
@@ -52,7 +52,7 @@ export function AddressDialog({
   entityId,
   address,
 }: AddressDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const isEditing = !!address;
   const queryClient = useQueryClient();

@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { createStudent, getStudent, listPersons, updateStudent } from "@/services";
 import type { Person, Student } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { mapFieldErrors, showMutationError, isStaleResourceError } from "@/lib/error-messages";
 import {
@@ -69,7 +69,7 @@ export function StudentFormDialog({
   student,
   onSaved,
 }: StudentFormDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const isEditing = !!student;
   const queryClient = useQueryClient();

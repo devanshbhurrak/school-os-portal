@@ -3,6 +3,7 @@ import type { CursorPage } from "@/types";
 import type {
   Announcement,
   AnnouncementCreate,
+  AnnouncementFeedItem,
   AnnouncementListParams,
   AnnouncementPublish,
   AnnouncementUpdate,
@@ -55,7 +56,7 @@ export async function deleteAnnouncement(id: string, version: number): Promise<v
 
 export async function getAnnouncementFeed(
   params: AnnouncementListParams = {},
-): Promise<CursorPage<Announcement>> {
-  const { data } = await apiClient.get<CursorPage<Announcement>>("/announcements/feed", { params });
+): Promise<CursorPage<AnnouncementFeedItem>> {
+  const { data } = await apiClient.get<CursorPage<AnnouncementFeedItem>>("/announcements/feed", { params });
   return data;
 }

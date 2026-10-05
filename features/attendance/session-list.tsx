@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { listSessions, createSession } from "@/services/attendance";
 import { listCohorts, listAcademicYears } from "@/services";
 import type { AttendanceSessionStatus } from "@/types/attendance";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -37,7 +37,7 @@ import {
 } from "@/components/ui/table";
 
 export function SessionList() {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();
@@ -70,7 +70,7 @@ export function SessionList() {
 
   const { data: sessionsPage, isLoading } = useQuery({
     queryKey: schoolKeys.attendanceSessions(schoolId, sessionsParams),
-    queryFn: () => listSessions(schoolId, sessionsParams),
+    queryFn: () => listSessions(sessionsParams),
     enabled: !!schoolId,
     staleTime: STALE_TIME.frequent,
   });
@@ -82,7 +82,7 @@ export function SessionList() {
         throw new Error("Select a cohort and academic year first.");
       }
       const today = new Date().toISOString().split("T")[0];
-      return createSession(schoolId, {
+      return createSession({
         cohort_id: selectedCohortId,
         academic_year_id: selectedYearId,
         session_date: today,

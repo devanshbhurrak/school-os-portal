@@ -5,24 +5,26 @@ import {
   ArrowRight,
   BookOpen,
   CalendarRange,
-  GraduationCap,
   History,
   Loader2,
   Settings,
   Users,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { listAuditLogs, listCohorts, listPersons } from "@/services";
+import { listAuditLogs } from "@/services";
 import { useAuth } from "@/hooks/use-auth";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCursorPagination } from "@/hooks/use-cursor-pagination";
-import { MAX_PAGE_SIZE } from "@/lib/constants";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { AUDIT_ACTION_LABELS } from "@/lib/display";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatDateTime, formatRelativeTime } from "@/lib/format";
-import { NeedsAttention } from "./needs-attention";
+import { StudentCountWidget } from "./widgets/student-count-widget";
+import { TeacherCountWidget } from "./widgets/teacher-count-widget";
+import { AttendanceSummaryWidget } from "./widgets/attendance-summary-widget";
+import { RecentAnnouncementsWidget } from "./widgets/recent-announcements-widget";
+import { DataQualityWidget } from "./widgets/data-quality-widget";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,23 +53,9 @@ const QUICK_LINKS = [
 export function HomePage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { activeSchool, activeYear } = useSchoolContextValue();
+  const { activeSchool, activeYear } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
-
-  const personsQuery = useQuery({
-    queryKey: schoolKeys.persons(schoolId, { limit: MAX_PAGE_SIZE }),
-    queryFn: () => listPersons({ limit: MAX_PAGE_SIZE }),
-    enabled: !!schoolId && hasPermission(PERMISSIONS.person.list),
-    staleTime: STALE_TIME.frequent,
-  });
-
-  const cohortsQuery = useQuery({
-    queryKey: schoolKeys.cohorts(schoolId, { limit: MAX_PAGE_SIZE }),
-    queryFn: () => listCohorts({ limit: MAX_PAGE_SIZE }),
-    enabled: !!schoolId && hasPermission(PERMISSIONS.cohort.list),
-    staleTime: STALE_TIME.frequent,
-  });
 
   const activity = useCursorPagination({
     queryKey: schoolKeys.audit(schoolId),
@@ -77,15 +65,6 @@ export function HomePage() {
     limit: 10,
     staleTime: STALE_TIME.frequent,
   });
-
-  function countLabel(
-    data: { items: unknown[]; has_more: boolean } | undefined,
-    isPending: boolean,
-  ) {
-    if (isPending) return null;
-    if (!data) return "—";
-    return data.has_more ? `${data.items.length}+` : String(data.items.length);
-  }
 
   return (
     <div className="space-y-6">
@@ -101,15 +80,28 @@ export function HomePage() {
         </p>
       </div>
 
-      <OverviewCards
-        personsLabel={countLabel(personsQuery.data, personsQuery.isPending)}
-        cohortsLabel={countLabel(cohortsQuery.data, cohortsQuery.isPending)}
-        yearName={activeYear?.name}
-        loading={!activeSchool}
-      />
+      {/* Stats row — only widgets the user has permission to see */}
+      {(hasPermission(PERMISSIONS.student.list) ||
+        hasPermission(PERMISSIONS.teacher.list) ||
+        hasPermission(PERMISSIONS.attendance.session.list)) && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {hasPermission(PERMISSIONS.student.list) && <StudentCountWidget />}
+          {hasPermission(PERMISSIONS.teacher.list) && <TeacherCountWidget />}
+          {hasPermission(PERMISSIONS.attendance.session.list) && (
+            <AttendanceSummaryWidget />
+          )}
+        </div>
+      )}
 
-      <NeedsAttention />
+      {/* Secondary row — announcements + data quality */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {hasPermission(PERMISSIONS.announcement.list) && (
+          <RecentAnnouncementsWidget />
+        )}
+        <DataQualityWidget />
+      </div>
 
+      {/* Quick links */}
       <div className="grid gap-4 sm:grid-cols-3">
         {QUICK_LINKS.map((link) => (
           <button
@@ -128,6 +120,7 @@ export function HomePage() {
         ))}
       </div>
 
+      {/* Recent activity */}
       <Card>
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -191,63 +184,6 @@ export function HomePage() {
           )}
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-interface OverviewCardsProps {
-  personsLabel: string | null;
-  cohortsLabel: string | null;
-  yearName?: string;
-  loading: boolean;
-}
-
-function OverviewCards({
-  personsLabel,
-  cohortsLabel,
-  yearName,
-  loading,
-}: OverviewCardsProps) {
-  const cards = [
-    {
-      label: "People",
-      value: personsLabel,
-      icon: Users,
-    },
-    {
-      label: "Sections",
-      value: cohortsLabel,
-      icon: GraduationCap,
-    },
-    {
-      label: "Active year",
-      value: yearName ?? "Not set",
-      icon: CalendarRange,
-      skipCount: true,
-    },
-  ];
-
-  return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      {cards.map((card) => (
-        <Card key={card.label}>
-          <CardContent className="flex items-center gap-3 pt-6">
-            <div className="flex size-10 items-center justify-center rounded-full bg-muted">
-              <card.icon className="size-5 text-muted-foreground" aria-hidden />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-xl font-semibold">
-                {(loading || (!card.skipCount && card.value === null)) ? (
-                  <Skeleton className="h-6 w-16" />
-                ) : (
-                  card.value ?? "—"
-                )}
-              </p>
-              <p className="text-sm text-muted-foreground">{card.label}</p>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
     </div>
   );
 }

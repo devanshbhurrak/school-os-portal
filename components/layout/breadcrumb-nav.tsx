@@ -12,7 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys } from "@/lib/query-keys";
 import {
   getPerson,
@@ -42,7 +42,7 @@ const DYNAMIC_ENTITY: Record<string, { label: string; kind: "person" | "year" | 
 };
 
 function useEntityName(kind: "person" | "year" | "cohort" | "user" | "role", id: string) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id;
 
   const query = useQuery<EntityNameData>({

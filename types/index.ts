@@ -10,3 +10,5 @@ export * from "./teacher";
 export * from "./timetable";
 export * from "./attendance";
 export * from "./import-job";
+export * from "./document";
+export * from "./parent";

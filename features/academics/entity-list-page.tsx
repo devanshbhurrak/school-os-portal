@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, Trash2, MoreHorizontal, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import type { CursorPage, CursorParams } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { useCursorPagination } from "@/hooks/use-cursor-pagination";
 import { usePermissions } from "@/hooks/use-permissions";
 import { STALE_TIME } from "@/lib/query-keys";
@@ -71,7 +71,7 @@ export function EntityListPage<T extends { id: string }>({
 }: {
   config: EntityListConfig<T>;
 }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();

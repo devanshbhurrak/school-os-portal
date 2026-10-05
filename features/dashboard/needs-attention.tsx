@@ -10,7 +10,7 @@ import {
   listClassSubjects,
   listCohorts,
 } from "@/services";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { MAX_PAGE_SIZE } from "@/lib/constants";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
@@ -24,7 +24,7 @@ interface Alert {
 }
 
 export function NeedsAttention() {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
 

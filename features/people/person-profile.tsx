@@ -29,7 +29,7 @@ import {
   listContacts,
 } from "@/services";
 import type { Address, Contact } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -74,7 +74,7 @@ function InfoItem({ icon: Icon, label, value }: { icon: typeof Cake; label: stri
 }
 
 export function PersonProfile({ personId }: { personId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();

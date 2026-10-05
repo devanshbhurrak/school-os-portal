@@ -13,7 +13,7 @@ import {
   updateAnnouncement,
 } from "@/services/announcements";
 import type { Announcement } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { mapFieldErrors, showMutationError, isStaleResourceError } from "@/lib/error-messages";
 import {
@@ -100,7 +100,7 @@ export function AnnouncementFormDialog({
   announcement,
   onSaved,
 }: AnnouncementFormDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const isEditing = !!announcement;
   const queryClient = useQueryClient();

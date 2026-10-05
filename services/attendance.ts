@@ -11,7 +11,6 @@ import type {
 } from "@/types/attendance";
 
 export async function listSessions(
-  _schoolId: string,
   params: AttendanceSessionListParams = {},
 ): Promise<CursorPage<AttendanceSession>> {
   const { data } = await apiClient.get<CursorPage<AttendanceSession>>(
@@ -22,7 +21,6 @@ export async function listSessions(
 }
 
 export async function getSession(
-  _schoolId: string,
   id: string,
 ): Promise<AttendanceSession> {
   const { data } = await apiClient.get<AttendanceSession>(`/attendance-sessions/${id}`);
@@ -30,7 +28,6 @@ export async function getSession(
 }
 
 export async function createSession(
-  _schoolId: string,
   input: AttendanceSessionCreate,
 ): Promise<AttendanceSession> {
   const { data } = await apiClient.post<AttendanceSession>("/attendance-sessions", input);
@@ -38,7 +35,6 @@ export async function createSession(
 }
 
 export async function updateSession(
-  _schoolId: string,
   id: string,
   input: AttendanceSessionUpdate,
 ): Promise<AttendanceSession> {
@@ -50,7 +46,6 @@ export async function updateSession(
 }
 
 export async function deleteSession(
-  _schoolId: string,
   id: string,
   version: number,
 ): Promise<void> {
@@ -58,7 +53,6 @@ export async function deleteSession(
 }
 
 export async function submitSession(
-  _schoolId: string,
   id: string,
   version: number,
 ): Promise<AttendanceSession> {
@@ -70,7 +64,6 @@ export async function submitSession(
 }
 
 export async function amendSession(
-  _schoolId: string,
   id: string,
   version: number,
 ): Promise<AttendanceSession> {
@@ -82,7 +75,6 @@ export async function amendSession(
 }
 
 export async function listRecords(
-  _schoolId: string,
   sessionId: string,
 ): Promise<AttendanceRecord[]> {
   const { data } = await apiClient.get<AttendanceRecord[]>(
@@ -92,7 +84,6 @@ export async function listRecords(
 }
 
 export async function updateRecord(
-  _schoolId: string,
   id: string,
   input: AttendanceRecordUpdate,
 ): Promise<AttendanceRecord> {
@@ -104,9 +95,21 @@ export async function updateRecord(
 }
 
 export async function bulkUpdateRecords(
-  _schoolId: string,
   sessionId: string,
   input: BulkRecordUpdate,
 ): Promise<void> {
   await apiClient.post(`/attendance-sessions/${sessionId}/bulk-update`, input);
+}
+
+export interface AttendanceTodaySummary {
+  sessions_total: number;
+  sessions_submitted: number;
+  records_present: number;
+  records_absent: number;
+  records_total: number;
+}
+
+export async function getTodayAttendanceSummary(): Promise<AttendanceTodaySummary> {
+  const { data } = await apiClient.get<AttendanceTodaySummary>("/attendance/today-summary");
+  return data;
 }

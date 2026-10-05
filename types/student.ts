@@ -45,6 +45,7 @@ export interface EnrollmentTransfer {
   new_academic_class_id: string
   effective_date: string
   reason?: string
+  version: number
 }
 
 export type StudentStatus = "ACTIVE" | "WITHDRAWN" | "GRADUATED" | "TRANSFERRED" | "INACTIVE" | "DECEASED";
@@ -108,6 +109,7 @@ export interface Guardian {
   guardian_last_name?: string | null;
   guardian_email?: string | null;
   guardian_phone?: string | null;
+  version: number;
 }
 
 export interface GuardianCreate {
@@ -124,4 +126,5 @@ export interface GuardianUpdate {
   is_primary?: boolean;
   is_emergency_contact?: boolean;
   can_pickup?: boolean;
+  version: number;
 }

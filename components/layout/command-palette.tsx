@@ -13,11 +13,11 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/lib/permissions";
 import { schoolKeys } from "@/lib/query-keys";
-import { listCohorts, listPersons } from "@/services";
+import { listCohorts, listPersons, searchAll } from "@/services";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { personDisplayName } from "@/lib/format";
 import type { LucideIcon } from "lucide-react";
@@ -82,12 +82,21 @@ interface CommandPaletteProps {
 export function CommandPalette({ open: controlledOpen, onOpenChange: controlledOnOpenChange }: CommandPaletteProps = {}) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const router = useRouter();
-  const { activeSchool, activeYear } = useSchoolContextValue();
+  const { activeSchool, activeYear } = useSchoolContext();
   const { hasPermission } = usePermissions();
 
   const open = controlledOpen ?? internalOpen;
   const setOpen = controlledOnOpenChange ?? setInternalOpen;
+
+  // Debounce the query by 300 ms for the global search API call
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -101,6 +110,15 @@ export function CommandPalette({ open: controlledOpen, onOpenChange: controlledO
   }, [setOpen]);
 
   const searchTerm = query.trim().length >= 2 ? query.trim() : null;
+  const debouncedSearchTerm = debouncedQuery.trim().length >= 2 ? debouncedQuery.trim() : null;
+
+  // Global API search (students + teachers) — debounced
+  const globalSearchQuery = useQuery({
+    queryKey: ["global-search", debouncedSearchTerm, activeSchool?.id],
+    queryFn: () => searchAll(debouncedSearchTerm!, 20),
+    enabled: !!debouncedSearchTerm && !!activeSchool?.id,
+    staleTime: 30_000,
+  });
 
   const personsQuery = useQuery({
     queryKey: schoolKeys.persons(activeSchool?.id ?? "", {
@@ -143,10 +161,14 @@ export function CommandPalette({ open: controlledOpen, onOpenChange: controlledO
     router.push(href);
   };
 
+  const searchStudents = globalSearchQuery.data?.students ?? [];
+  const searchTeachers = globalSearchQuery.data?.teachers ?? [];
+  const isSearchLoading = globalSearchQuery.isLoading || personsQuery.isLoading;
+
   return (
     <CommandDialog open={open} onOpenChange={setOpen} title="Search School OS">
       <CommandInput
-        placeholder="Search people, sections, actions…"
+        placeholder="Search people, students, teachers, sections…"
         value={query}
         onValueChange={setQuery}
       />
@@ -185,25 +207,73 @@ export function CommandPalette({ open: controlledOpen, onOpenChange: controlledO
           </CommandGroup>
         ) : null}
         {searchTerm ? (
-          <CommandGroup heading="People">
-            {personsQuery.isLoading ? (
-              <CommandItem disabled>Searching people…</CommandItem>
-            ) : (
-              (personsQuery.data ?? []).map((person) => (
-                <CommandItem
-                  key={person.id}
-                  value={`person ${personDisplayName(person)}`}
-                  onSelect={() => navigate(`/people/${person.id}`)}
-                >
-                  <Users className="size-4" aria-hidden />
-                  <span>{personDisplayName(person)}</span>
-                  <span className="ml-auto">
-                    <StatusBadge status={person.status} />
-                  </span>
-                </CommandItem>
-              ))
-            )}
-          </CommandGroup>
+          <>
+            {searchStudents.length > 0 ? (
+              <CommandGroup heading="Students">
+                {isSearchLoading ? (
+                  <CommandItem disabled>Searching students…</CommandItem>
+                ) : (
+                  searchStudents.map((student) => (
+                    <CommandItem
+                      key={student.id}
+                      value={`student ${student.first_name} ${student.last_name ?? ""} ${student.admission_number}`}
+                      onSelect={() => navigate(`/students/${student.id}`)}
+                    >
+                      <GraduationCap className="size-4" aria-hidden />
+                      <span>
+                        {student.first_name} {student.last_name}
+                      </span>
+                      <span className="ml-auto text-xs text-muted-foreground">
+                        {student.admission_number}
+                      </span>
+                    </CommandItem>
+                  ))
+                )}
+              </CommandGroup>
+            ) : null}
+            {searchTeachers.length > 0 ? (
+              <CommandGroup heading="Teachers">
+                {isSearchLoading ? (
+                  <CommandItem disabled>Searching teachers…</CommandItem>
+                ) : (
+                  searchTeachers.map((teacher) => (
+                    <CommandItem
+                      key={teacher.id}
+                      value={`teacher ${teacher.first_name} ${teacher.last_name ?? ""} ${teacher.employee_number ?? ""}`}
+                      onSelect={() => navigate(`/teachers/${teacher.id}`)}
+                    >
+                      <Users className="size-4" aria-hidden />
+                      <span>
+                        {teacher.first_name} {teacher.last_name}
+                      </span>
+                      <span className="ml-auto text-xs text-muted-foreground">
+                        {teacher.designation ?? "Teacher"}
+                      </span>
+                    </CommandItem>
+                  ))
+                )}
+              </CommandGroup>
+            ) : null}
+            <CommandGroup heading="People">
+              {isSearchLoading ? (
+                <CommandItem disabled>Searching people…</CommandItem>
+              ) : (
+                (personsQuery.data ?? []).map((person) => (
+                  <CommandItem
+                    key={person.id}
+                    value={`person ${personDisplayName(person)}`}
+                    onSelect={() => navigate(`/people/${person.id}`)}
+                  >
+                    <Users className="size-4" aria-hidden />
+                    <span>{personDisplayName(person)}</span>
+                    <span className="ml-auto">
+                      <StatusBadge status={person.status} />
+                    </span>
+                  </CommandItem>
+                ))
+              )}
+            </CommandGroup>
+          </>
         ) : null}
         <CommandSeparator />
         <p className="p-2 text-center text-xs text-muted-foreground">

@@ -12,7 +12,7 @@ import {
   updatePerson,
 } from "@/services";
 import type { Person } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { BLOOD_GROUPS, GENDER_OPTIONS } from "@/lib/display";
 import {
@@ -76,7 +76,7 @@ export function PersonFormDialog({
   person,
   onSaved,
 }: PersonFormDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const isEditing = !!person;
   const queryClient = useQueryClient();

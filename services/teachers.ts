@@ -86,3 +86,8 @@ export async function endAssignment(
   });
   return data;
 }
+
+export async function getTeacherCounts(): Promise<{ active: number; total: number }> {
+  const { data } = await apiClient.get<{ active: number; total: number }>("/teachers/counts");
+  return data;
+}

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { requestPasswordReset } from "@/services/auth";
+import { ApiError, ErrorCode } from "@/types";
 import { passwordResetSchema, type PasswordResetValues } from "./schemas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,9 +33,8 @@ export function PasswordResetForm() {
     } catch (err: unknown) {
       // Rate limit: tell the user to wait. Any other error: generic message.
       // We do NOT distinguish "email not found" to avoid user enumeration.
-      const status = (err as { status?: number })?.status ??
-        (err as { response?: { status?: number } })?.response?.status;
-      if (status === 429) {
+      const apiError = err as ApiError;
+      if (apiError?.code === ErrorCode.RateLimited) {
         setServerError("Too many requests. Please wait a few minutes before trying again.");
       } else {
         setServerError("Something went wrong. Please try again.");

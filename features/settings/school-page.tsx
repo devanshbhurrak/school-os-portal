@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { getSchool, updateSchool } from "@/services";
 import type { SchoolStatus, SchoolUpdate } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { orgKeys, STALE_TIME } from "@/lib/query-keys";
 import { PERMISSIONS } from "@/lib/permissions";
 import { SCHOOL_BOARDS } from "@/lib/display";
@@ -47,7 +47,7 @@ function emptyToNull(value: string | undefined): string | null {
 }
 
 export function SchoolSettingsPage() {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();
   const [staleOpen, setStaleOpen] = useState(false);

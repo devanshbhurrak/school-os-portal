@@ -23,7 +23,7 @@ import type {
   AcademicYearCreate,
   AcademicYearUpdate,
 } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { usePermissions } from "@/hooks/use-permissions";
 import { MAX_PAGE_SIZE } from "@/lib/constants";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
@@ -53,7 +53,7 @@ const YEAR_STATUS_OPTIONS = [
 ];
 
 export function YearDetailPage({ yearId }: { yearId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const queryClient = useQueryClient();

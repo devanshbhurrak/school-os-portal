@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BookOpen } from "lucide-react";
 import { listAuditLogs } from "@/services";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { useCursorPagination } from "@/hooks/use-cursor-pagination";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { AUDIT_ACTION_LABELS } from "@/lib/display";
@@ -34,7 +34,7 @@ const ENTITY_TYPE_OPTIONS = [
 ];
 
 export function AuditPage() {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
 
   const [entityType, setEntityType] = useState("");

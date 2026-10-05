@@ -26,3 +26,8 @@ export async function updateStudent(studentId: string, input: StudentUpdate): Pr
 export async function deleteStudent(studentId: string, version: number): Promise<void> {
   await apiClient.delete(`/students/${studentId}`, { data: { version } });
 }
+
+export async function getStudentCounts(): Promise<{ active: number; total: number }> {
+  const { data } = await apiClient.get<{ active: number; total: number }>("/students/counts");
+  return data;
+}

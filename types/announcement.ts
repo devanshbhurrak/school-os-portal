@@ -58,6 +58,16 @@ export interface AnnouncementPublish {
   version: number;
 }
 
+export interface AnnouncementFeedItem {
+  id: ID;
+  title: string;
+  priority: AnnouncementPriority;
+  status: AnnouncementStatus;
+  published_at: ISODateTime | null;
+  expires_at: ISODateTime | null;
+  targets: AnnouncementTarget[];
+}
+
 export interface AnnouncementListParams {
   status?: AnnouncementStatus;
   priority?: AnnouncementPriority;

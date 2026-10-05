@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { addGuardian, updateGuardian, listPersons } from "@/services";
 import type { Guardian, GuardianRelationship, Person } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { showMutationError } from "@/lib/error-messages";
 import {
@@ -66,7 +66,7 @@ export function GuardianFormDialog({
   guardian,
   onSaved,
 }: GuardianFormDialogProps) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const isEditing = !!guardian;
   const queryClient = useQueryClient();
@@ -119,14 +119,15 @@ export function GuardianFormDialog({
   const saveMutation = useMutation({
     mutationFn: (values: GuardianFormValues) => {
       if (isEditing && guardian) {
-        return updateGuardian(schoolId, guardian.id, {
+        return updateGuardian(guardian.id, {
           relationship: values.relationship,
           is_primary: values.is_primary,
           is_emergency_contact: values.is_emergency_contact,
           can_pickup: values.can_pickup,
+          version: guardian.version,
         });
       }
-      return addGuardian(schoolId, {
+      return addGuardian({
         student_id: studentId,
         guardian_person_id: values.guardian_person_id,
         relationship: values.relationship,

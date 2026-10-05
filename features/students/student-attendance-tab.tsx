@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { listSessions } from "@/services/attendance";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
 import { formatDate } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -19,13 +19,13 @@ import {
 } from "@/components/ui/table";
 
 export function StudentAttendanceTab({ studentId }: { studentId: string }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();
 
   const { data: sessionsPage, isLoading } = useQuery({
     queryKey: schoolKeys.studentAttendance(schoolId, studentId),
-    queryFn: () => listSessions(schoolId, { limit: 100 }),
+    queryFn: () => listSessions({ limit: 100 }),
     enabled: !!schoolId,
     staleTime: STALE_TIME.frequent,
   });

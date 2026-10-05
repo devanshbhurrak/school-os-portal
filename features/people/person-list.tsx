@@ -9,7 +9,7 @@ import {
 } from "@/services";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Person, PersonStatus } from "@/types";
-import { useSchoolContextValue } from "@/hooks/use-school-context";
+import { useSchoolContext } from "@/hooks/use-school-context";
 import { useCursorPagination } from "@/hooks/use-cursor-pagination";
 import { usePermissions } from "@/hooks/use-permissions";
 import { schoolKeys, STALE_TIME } from "@/lib/query-keys";
@@ -41,7 +41,7 @@ const STATUS_FILTERS: (PersonStatus | "ALL")[] = ["ALL", "ACTIVE", "INACTIVE", "
 const GENDER_FILTERS = ["ALL", "Male", "Female", "Other", "Prefer not to say"];
 
 export function PersonList({ initialNew = false }: { initialNew?: boolean }) {
-  const { activeSchool } = useSchoolContextValue();
+  const { activeSchool } = useSchoolContext();
   const { hasPermission } = usePermissions();
   const schoolId = activeSchool?.id ?? "";
   const router = useRouter();
