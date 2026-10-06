@@ -219,7 +219,11 @@ export function ParentFormDialog({
                             <SelectValue placeholder="Select a person" />
                           </SelectTrigger>
                           <SelectContent>
-                            {(personsQuery.data?.items ?? []).map((p: Person) => (
+                            {personsQuery.isError ? (
+                              <p className="px-2 py-1.5 text-xs text-destructive">
+                                Failed to load persons.
+                              </p>
+                            ) : (personsQuery.data?.items ?? []).map((p: Person) => (
                               <SelectItem key={p.id} value={p.id}>
                                 {[p.first_name, p.last_name].filter(Boolean).join(" ")}
                                 {p.primary_email ? ` — ${p.primary_email}` : ""}

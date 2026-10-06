@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Upload } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { uploadDocument } from "@/services/documents";
 import type { DocumentEntityType, DocumentType } from "@/types";
@@ -25,7 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const DOCUMENT_TYPE_OPTIONS: { value: DocumentType; label: string }[] = [
   { value: "PHOTO", label: "Photo" },
@@ -120,14 +121,30 @@ export function UploadWidget({ open, onOpenChange, entityType, entityId }: Uploa
               type="file"
               accept={ACCEPTED_TYPES}
               className="block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              onChange={(e) => {
+                const selected = e.target.files?.[0] ?? null;
+                if (selected && selected.size > MAX_FILE_SIZE) {
+                  toast.error(`File "${selected.name}" exceeds the 10 MB size limit.`);
+                  e.target.value = "";
+                  setFile(null);
+                  return;
+                }
+                setFile(selected);
+              }}
             />
+            {file && !uploadMutation.isPending && (
+              <p className="text-xs text-muted-foreground">
+                {file.name} &mdash; {(file.size / (1024 * 1024)).toFixed(2)} MB
+              </p>
+            )}
           </div>
 
           {uploadMutation.isPending && (
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Uploading...</p>
-              <Progress value={undefined} className="h-2" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="size-4 animate-spin" />
+              <span>
+                Uploading{file ? ` "${file.name}" (${(file.size / (1024 * 1024)).toFixed(2)} MB)` : ""}…
+              </span>
             </div>
           )}
         </div>

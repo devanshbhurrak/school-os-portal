@@ -51,8 +51,7 @@ export function TimetableFormDialog({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<TimetableFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(timetableSchema) as any,
+    resolver: zodResolver(timetableSchema),
     defaultValues: { name: "" },
   });
 

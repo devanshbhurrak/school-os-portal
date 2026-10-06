@@ -59,7 +59,7 @@ export function NotificationBell() {
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: orgKeys.unreadCount(orgId) });
     queryClient.invalidateQueries({
-      queryKey: ["org", orgId, "notifications"],
+      queryKey: orgKeys.notifications(orgId),
     });
   };
 

@@ -47,7 +47,7 @@ export function ParentProfile({ parentId }: { parentId: string }) {
   const { data: parent, isLoading, isError, error, refetch } = useQuery({
     queryKey: schoolKeys.parent(schoolId, parentId),
     queryFn: () => getParent(parentId),
-    enabled: !!schoolId,
+    enabled: !!schoolId && !!parentId,
     staleTime: STALE_TIME.entity,
   });
 

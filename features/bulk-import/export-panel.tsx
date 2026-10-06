@@ -37,7 +37,7 @@ export function ExportPanel() {
   const [exportingType, setExportingType] = useState<ReportType | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
-  const { data: jobsPage } = useQuery({
+  const { data: jobsPage, isError: jobsError } = useQuery({
     queryKey: schoolKeys.exportJobs(schoolId ?? ""),
     queryFn: () => listExportJobs({ limit: 20 }),
     enabled: !!schoolId,
@@ -62,7 +62,7 @@ export function ExportPanel() {
     onSettled: () => setExportingType(null),
   });
 
-  async function handleExport(reportType: ReportType) {
+  function handleExport(reportType: ReportType) {
     if (!schoolId) return;
     setExportingType(reportType);
     exportMutation.mutate(reportType);
@@ -101,7 +101,11 @@ export function ExportPanel() {
           </div>
         </div>
 
-        {jobs.length > 0 && (
+        {jobsError && (
+          <p className="text-sm text-destructive">Failed to load recent exports.</p>
+        )}
+
+        {!jobsError && jobs.length > 0 && (
           <div>
             <h3 className="text-sm font-medium mb-2">Recent exports</h3>
             <div className="space-y-2">
