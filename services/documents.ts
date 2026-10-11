@@ -59,11 +59,15 @@ export async function uploadDocument(
 ): Promise<Document> {
   const { id, upload_url } = await requestUpload(input);
 
-  await fetch(upload_url, {
+  const res = await fetch(upload_url, {
     method: "PUT",
     headers: { "Content-Type": input.mime_type },
     body: file,
   });
+
+  if (!res.ok) {
+    throw new Error(`Upload failed: ${res.status} ${res.statusText}`);
+  }
 
   return confirmUpload(id);
 }

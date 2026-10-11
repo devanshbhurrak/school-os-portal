@@ -24,6 +24,7 @@ import { ConfirmDialog } from "@/components/patterns/confirm-dialog";
 import { ErrorState } from "@/components/patterns/error-state";
 import { TeacherFormDialog } from "./teacher-form-dialog";
 import { AssignmentTab } from "./assignment-tab";
+import { TeacherTimetableTab } from "./teacher-timetable-tab";
 
 function InfoItem({ icon: Icon, label, value }: { icon: typeof Briefcase; label: string; value: React.ReactNode }) {
   return (
@@ -205,8 +206,8 @@ export function TeacherProfile({ teacherId }: { teacherId: string }) {
 
         <TabsContent value="timetable" className="mt-4">
           <Card>
-            <CardContent className="flex items-center justify-center py-16 text-muted-foreground">
-              <p className="text-sm">Timetable coming soon.</p>
+            <CardContent className="pt-6">
+              <TeacherTimetableTab teacherId={teacherId} />
             </CardContent>
           </Card>
         </TabsContent>

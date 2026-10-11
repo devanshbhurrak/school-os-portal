@@ -64,9 +64,35 @@ const announcementSchema = z
         path: ["scheduled_at"],
       });
     }
+    data.targets.forEach((t, i) => {
+      if (t.target_type !== "SCHOOL" && !t.target_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Target is required for this type",
+          path: ["targets", i, "target_id"],
+        });
+      }
+    });
   });
 
 type AnnouncementFormValues = z.infer<typeof announcementSchema>;
+
+function formatLocalDatetime(isoString: string): string {
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return "";
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function toIsoStringSafely(val?: string | null): string | undefined {
+  if (!val?.trim()) return undefined;
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
+}
 
 function toFormValues(a: Announcement): AnnouncementFormValues {
   return {
@@ -74,12 +100,11 @@ function toFormValues(a: Announcement): AnnouncementFormValues {
     body: a.body,
     priority: a.priority,
     publish_mode: a.publish_mode,
-    scheduled_at: a.published_at && a.publish_mode === "SCHEDULED"
-      ? new Date(a.published_at).toISOString().slice(0, 16)
-      : "",
-    expires_at: a.expires_at
-      ? new Date(a.expires_at).toISOString().slice(0, 16)
-      : "",
+    scheduled_at:
+      a.published_at && a.publish_mode === "SCHEDULED"
+        ? formatLocalDatetime(a.published_at)
+        : "",
+    expires_at: a.expires_at ? formatLocalDatetime(a.expires_at) : "",
     targets: a.targets.map((t) => ({
       target_type: t.target_type,
       target_id: t.target_id ?? undefined,
@@ -161,9 +186,7 @@ export function AnnouncementFormDialog({
         target_type: t.target_type,
         target_id: t.target_id || undefined,
       }));
-      const expires_at = values.expires_at
-        ? new Date(values.expires_at).toISOString()
-        : undefined;
+      const expires_at = toIsoStringSafely(values.expires_at);
 
       if (isEditing && announcement) {
         const version = announcementQuery.data?.version ?? announcement.version;
@@ -178,8 +201,8 @@ export function AnnouncementFormDialog({
       }
 
       const published_at =
-        values.publish_mode === "SCHEDULED" && values.scheduled_at
-          ? new Date(values.scheduled_at).toISOString()
+        values.publish_mode === "SCHEDULED"
+          ? toIsoStringSafely(values.scheduled_at)
           : undefined;
 
       return createAnnouncement({

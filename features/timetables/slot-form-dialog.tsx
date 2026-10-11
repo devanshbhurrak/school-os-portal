@@ -12,6 +12,7 @@ import {
   updateTimetableSlot,
   listPeriodDefinitions,
   listTeachers,
+  listTimetableSlots,
 } from "@/services";
 import type { PeriodDefinition, TimetableSlot } from "@/types";
 import { useSchoolContext } from "@/hooks/use-school-context";
@@ -97,6 +98,14 @@ export function SlotFormDialog({
     staleTime: STALE_TIME.config,
   });
   const teachers = teachersPage?.items ?? [];
+
+  const { data: slotsPage } = useQuery({
+    queryKey: schoolKeys.timetableSlots(schoolId),
+    queryFn: () => listTimetableSlots({ limit: 500 }),
+    enabled: open && !!schoolId,
+    staleTime: STALE_TIME.frequent,
+  });
+  const existingSlots = slotsPage?.items ?? [];
 
   const {
     register,
@@ -205,6 +214,41 @@ export function SlotFormDialog({
     },
   });
 
+  const onFormSubmit = async (values: SlotFormValues) => {
+    const targetPeriod = isEdit && slot ? slot.period_definition_id : values.period_definition_id;
+    const targetDay = isEdit && slot ? slot.day_of_week : values.day_of_week;
+
+    const teacherConflict = existingSlots.find(
+      (s) =>
+        s.id !== slot?.id &&
+        s.day_of_week === targetDay &&
+        s.period_definition_id === targetPeriod &&
+        s.teacher_id === values.teacher_id,
+    );
+    if (teacherConflict) {
+      setError("teacher_id", {
+        message: "This teacher already has a slot at this period and day.",
+      });
+      return;
+    }
+
+    const cohortConflict = existingSlots.find(
+      (s) =>
+        s.id !== slot?.id &&
+        s.day_of_week === targetDay &&
+        s.period_definition_id === targetPeriod &&
+        s.cohort_id === values.cohort_id,
+    );
+    if (cohortConflict) {
+      setError("period_definition_id", {
+        message: "This cohort already has a slot at this period and day.",
+      });
+      return;
+    }
+
+    await mutation.mutateAsync(values);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
@@ -217,7 +261,7 @@ export function SlotFormDialog({
 
         <form
           id="slot-form"
-          onSubmit={handleSubmit((values) => mutation.mutateAsync(values))}
+          onSubmit={handleSubmit(onFormSubmit)}
           className="space-y-4"
         >
           {!isEdit && (

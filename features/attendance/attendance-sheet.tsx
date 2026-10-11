@@ -136,7 +136,11 @@ export function AttendanceSheet({ sessionId }: { sessionId: string }) {
         records: localRecords.map((r) => ({
           enrollment_id: r.enrollment_id,
           status: r.status,
-          arrived_at: r.arrived_at?.slice(0, 8) ?? null,
+          arrived_at: r.arrived_at
+            ? r.arrived_at.length === 5
+              ? `${r.arrived_at}:00`
+              : r.arrived_at.slice(0, 8)
+            : null,
           notes: r.notes,
         })),
       }),

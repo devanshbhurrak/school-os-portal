@@ -1,10 +1,12 @@
 "use client";
 
 import {
+  Bell,
   CalendarRange,
   CalendarDays,
   ClipboardList,
   Database,
+  FileSpreadsheet,
   GraduationCap,
   History,
   Home,
@@ -166,6 +168,13 @@ export const NAV_GROUPS: NavGroup[] = [
         permission: PERMISSIONS.bulkImport.import.list,
         match: ["/data-management"],
       },
+      {
+        href: "/reports",
+        label: "Reports",
+        icon: FileSpreadsheet,
+        permission: PERMISSIONS.report.list,
+        match: ["/reports"],
+      },
     ],
   },
   {
@@ -177,6 +186,13 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: Megaphone,
         permission: PERMISSIONS.announcement.list,
         match: ["/announcements"],
+      },
+      {
+        href: "/notifications",
+        label: "Notifications",
+        icon: Bell,
+        permission: PERMISSIONS.notification.list,
+        match: ["/notifications"],
       },
     ],
   },
@@ -241,6 +257,8 @@ export const SEGMENT_LABELS: Record<string, string> = {
   memberships: "Access",
   audit: "Audit Log",
   announcements: "Announcements",
+  notifications: "Notifications",
+  reports: "Reports",
   teachers: "Teachers",
   timetables: "Timetables",
   attendance: "Attendance",

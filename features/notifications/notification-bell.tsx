@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Bell, Check, CheckCheck } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
@@ -22,6 +23,7 @@ import {
   markNotificationRead,
 } from "@/services/notifications";
 import type { Notification, NotificationType } from "@/types/notification";
+import { notificationHref } from "./notification-links";
 
 const TYPE_LABELS: Record<NotificationType, string> = {
   ANNOUNCEMENT: "Announcement",
@@ -46,7 +48,7 @@ export function NotificationBell() {
   const { data: unreadData } = useQuery({
     queryKey: orgKeys.unreadCount(orgId),
     queryFn: getUnreadCount,
-    refetchInterval: 30_000,
+    refetchInterval: 60_000,
     enabled: !!orgId,
   });
 
@@ -127,6 +129,8 @@ export function NotificationBell() {
                     if (!n.is_read) {
                       markOneMutation.mutate(n.id);
                     }
+                    setOpen(false);
+                    window.location.href = notificationHref(n);
                   }}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -157,6 +161,15 @@ export function NotificationBell() {
             </div>
           )}
         </ScrollArea>
+        <div className="border-t px-3 py-2 text-center">
+          <Link
+            href="/notifications"
+            onClick={() => setOpen(false)}
+            className="text-xs font-medium text-primary hover:underline"
+          >
+            View all notifications
+          </Link>
+        </div>
       </PopoverContent>
     </Popover>
   );
